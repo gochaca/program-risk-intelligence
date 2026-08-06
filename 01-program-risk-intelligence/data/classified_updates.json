@@ -18,7 +18,7 @@
       "ground_truth_note": "Handoff just occurred with a week of runway across multiple sites and no stated tracking/validation process yet.",
       "ai_classification": "at_risk",
       "ai_signal": "none",
-      "ai_reason": "Legal copy was only just finalized and distributed, with implementation across multiple teams (Web Platform, Mobile, Dealer Systems) just beginning this week for an Oct 31 deadline - only one week of runway. Work is moving forward with a clear plan, but the tight timeline for validating implementation across multiple sites/teams poses a credible risk to the due date."
+      "ai_reason": "Legal has just finalized copy on 10/24, and implementation across three teams (Web Platform, Mobile, Dealer Systems) is only now beginning with a 10/31 deadline, leaving just one week to update and validate multiple sites/communications. This tight timeline with multi-team coordination and validation still pending creates real schedule pressure, though work is actively moving."
     },
     {
       "update_id": "HND-146b",
@@ -37,7 +37,7 @@
       "ground_truth_note": "Security patch release is legitimately superseding CCPA work; one-day buffer before due date.",
       "ai_classification": "at_risk",
       "ai_signal": "competing_objectives",
-      "ai_reason": "The Q4 security patch release has taken priority and locked the release train through 10/25, delaying start of CCPA implementation despite having received finalized copy on 10/22. This leaves only one day of buffer (10/30 target vs 10/31 due date), so any slippage in the patch release or implementation would threaten the deadline."
+      "ai_reason": "The Q4 security patch release has taken priority over the CCPA compliance work, delaying the start of implementation until 10/25, leaving only one day of buffer before the 10/31 due date. Work is expected to move but with no room for slippage, this is correctly self-rated High risk."
     },
     {
       "update_id": "HND-146c",
@@ -56,7 +56,7 @@
       "ground_truth_note": "Vendor unresponsive for 9+ days on the critical path; see HND-520 for the vendor-side reason. Self-reported risk likely understated.",
       "ai_classification": "blocked",
       "ai_signal": "bottlenecked",
-      "ai_reason": "The team cannot push CCPA copy live without BrightPath's release calendar confirmation, and there has been no response since the request on 10/15 - a 9+ day silence with only 7 days left until the 10/31 due date. Progress is fully stalled on this external dependency, and the self-reported \"Medium\" risk understates the urgency given how close the deadline is."
+      "ai_reason": "Team cannot push CCPA copy live without BrightPath's release calendar confirmation, and there has been no response since the request on 10/15 (9 days of silence with due date only a week away on 10/31). Progress has genuinely stopped pending an external vendor decision, making the 'Medium' self-rating too optimistic given the tight timeline."
     },
     {
       "update_id": "HND-201",
@@ -75,7 +75,7 @@
       "ground_truth_note": "Legal's own deliverable is done on schedule.",
       "ai_classification": "on_track",
       "ai_signal": "none",
-      "ai_reason": "Legal finalized and distributed CCPA copy on the due date (10/20), and the report confirms completion with no outstanding actions on their end\u2014only passive monitoring of downstream confirmations remains."
+      "ai_reason": "The team completed and distributed the CCPA copy on the 10/20 due date as planned, with no outstanding actions on their end; they are simply monitoring downstream confirmations, which is a low-risk, proactive posture."
     },
     {
       "update_id": "HND-310",
@@ -94,7 +94,7 @@
       "ground_truth_note": "Two reschedules in three weeks is a trend, not a one-off; four days of buffer left before the due date. See also HND-700.",
       "ai_classification": "at_risk",
       "ai_signal": "bottlenecked",
-      "ai_reason": "The cutover rehearsal has now been rescheduled twice in three weeks due to Acme's own staffing shortages, pushing the rehearsal to 11/03 with only 4 days of buffer before the 11/07 cutover date. This pattern of slippage, combined with minimal remaining slack, threatens the due date despite the vendor's confidence, and the self-reported Medium risk understates the compounding delay pattern."
+      "ai_reason": "The cutover rehearsal has been rescheduled twice in three weeks due to Acme's staffing shortages, now landing on 11/03 -- just 4 days before the 11/07 cutover date. This leaves virtually no buffer to address issues found in rehearsal, so despite the vendor's confidence, the pattern of slippage credibly threatens the due date."
     },
     {
       "update_id": "HND-311",
@@ -113,7 +113,7 @@
       "ground_truth_note": "No response to the weekly request at all, one week before the due date.",
       "ai_classification": "at_risk",
       "ai_signal": "quiet",
-      "ai_reason": "No update was submitted this week (only a repeat of the 10/17 \"on track\" status), and with the due date just one week away (10/31), this lack of fresh information from a vendor on a security review is a meaningful signal that warrants follow-up before assuming progress continues."
+      "ai_reason": "No update was submitted this week, only a week before the 10/31 due date, and the most recent substantive status is a stale \"on track for October\" comment from 10/17. This silence so close to the deadline is a warning sign, even though nothing has explicitly stopped progress."
     },
     {
       "update_id": "HND-402",
@@ -132,7 +132,7 @@
       "ground_truth_note": "Clean status, three weeks of runway. Contrast with HND-95 from the same team this same week.",
       "ai_classification": "on_track",
       "ai_signal": "none",
-      "ai_reason": "Assets are in final legal review, a standard step, with no blockers reported and about three weeks remaining before the due date. Nothing in the update suggests a credible threat to the deadline."
+      "ai_reason": "Assets are in a standard, expected legal review stage with three weeks remaining before the due date and no blockers reported, consistent with the self-reported low risk."
     },
     {
       "update_id": "HND-403",
@@ -151,7 +151,7 @@
       "ground_truth_note": "Proactively surfaced and well-managed; a good false-positive test for over-flagging classifiers.",
       "ai_classification": "on_track",
       "ai_signal": "none",
-      "ai_reason": "The translation discrepancy affects only 3 of 12 markets and has a clear fix date (10/28), leaving over two weeks of buffer before the 11/14 due date. This is a scoped, actively managed issue with no indication of broader delay."
+      "ai_reason": "A limited translation issue in 3 of 12 markets is being actively fixed with a clear resolution date (10/28), well over two weeks ahead of the 11/14 launch, giving ample buffer for verification."
     },
     {
       "update_id": "HND-520",
@@ -170,7 +170,7 @@
       "ground_truth_note": "Directly explains why HND-146c (Dealer Systems Integration) is stalled \u2014 same vendor, cross-team dependency.",
       "ai_classification": "blocked",
       "ai_signal": "competing_objectives",
-      "ai_reason": "Due date is today (2025-10-24), but the team has explicitly paused all work on the dealer portal release calendar to focus on an emergency firmware defect escalated by Honda, with no ETA for resuming. Progress on this initiative has fully stopped and is not expected to move forward without the unrelated emergency being resolved first."
+      "ai_reason": "The Dealer Portal Release Calendar work is explicitly paused with no ETA because the team is fully diverted to an emergency firmware defect escalated by Honda. Since today is the due date and there's no forward movement or timeline to resume, this is blocked, driven by an unplanned competing priority."
     },
     {
       "update_id": "HND-88",
@@ -189,7 +189,7 @@
       "ground_truth_note": "Due date is one day out with an unresolved external dependency; self-reported Medium likely understates the actual risk. See HND-89.",
       "ai_classification": "blocked",
       "ai_signal": "bottlenecked",
-      "ai_reason": "The team has repeated the exact same status as last week, still waiting on Data Privacy & Legal Ops to confirm the consent taxonomy, with the due date tomorrow (10/25) and no forward movement on mapping possible until that decision arrives. Self-reported 'Medium' risk understates the situation given the due date is essentially at hand with an unresolved external dependency and no indication of escalation to unblock Legal.</reason>\n</invoke>\n"
+      "ai_reason": "The team explicitly states this is the same status as last week, waiting on Data Privacy & Legal Ops to confirm the consent taxonomy before mapping can be finalized, with the due date arriving tomorrow. No forward movement has occurred and the blocking dependency shows no sign of resolution, so despite the self-rated \"Medium\" risk, this should be treated as blocked given the imminent deadline and stalled dependency."
     },
     {
       "update_id": "HND-89",
@@ -208,7 +208,7 @@
       "ground_truth_note": "Self-rated Low from Legal's own vantage point, but this delay is directly blocking HND-88, which is due tomorrow. Classic self-report-vs-program-reality gap.",
       "ai_classification": "at_risk",
       "ai_signal": "competing_objectives",
-      "ai_reason": "Legal review of the consent taxonomy has been pushed to next week because the team is prioritizing CCPA website copy and an unplanned EU DSAR audit request from Compliance, leaving less than a week of buffer before the 10/31 due date. Despite the self-reported 'Low' risk, the competing unplanned work directly threatens on-time completion with little slack remaining.</reason>\n</invoke>\n"
+      "ai_reason": "Legal review of the consent taxonomy was pushed to next week because the team's bandwidth was consumed by CCPA website copy work and an unplanned EU DSAR audit request from Compliance. With the due date only a week away (10/31) and no work done this week, the self-reported 'Low' risk rationale understates the threat to the deadline."
     },
     {
       "update_id": "HND-150",
@@ -227,7 +227,7 @@
       "ground_truth_note": "This is the release that's freezing HND-146b for the same team \u2014 legitimate priority, on track for its own date.",
       "ai_classification": "on_track",
       "ai_signal": "none",
-      "ai_reason": "QA sign-off is expected same day and release remains on schedule for 10/25 with no open blocking issues reported."
+      "ai_reason": "QA sign-off is expected the same day as the report and release remains on the original 10/25 date with no open blocking issues cited, indicating the work is proceeding as planned."
     },
     {
       "update_id": "HND-610",
@@ -246,7 +246,7 @@
       "ground_truth_note": "On track as reported; contrast with HND-611 from the same team, same week.",
       "ai_classification": "on_track",
       "ai_signal": "none",
-      "ai_reason": "Staging test completed successfully on 10/22 and production deploy is scheduled for 10/25, one day ahead of the 10/26 due date, with no dependencies or blockers noted."
+      "ai_reason": "Staging test passed cleanly on 10/22 and production deploy is scheduled for 10/25, one day ahead of the 10/26 due date, giving a clear, credible plan to completion with no open dependencies."
     },
     {
       "update_id": "HND-611",
@@ -265,7 +265,7 @@
       "ground_truth_note": "Same team as HND-610; an unplanned incident is now competing with a still-on-track ticket, worth flagging even though HND-610 itself looks clean.",
       "ai_classification": "at_risk",
       "ai_signal": "competing_objectives",
-      "ai_reason": "An unplanned production incident (partner API break) pulled two engineers off the SSO cert work, leaving the 10/25 deploy with zero buffer. Due date is today (10/24) and any further disruption from the ongoing incident could push the SSO work past deadline."
+      "ai_reason": "An unplanned production incident (partner API breakage) pulled two engineers off the SSO cert work, leaving zero buffer for the 10/25 deploy despite the due date being today (10/24). The work hasn't stopped, but the emergency has directly superseded planned resourcing, threatening the timeline if anything else slips."
     },
     {
       "update_id": "HND-77",
@@ -284,7 +284,7 @@
       "ground_truth_note": "Completed early; same team as the blocked HND-146c this week.",
       "ai_classification": "on_track",
       "ai_signal": "none",
-      "ai_reason": "Onboarding for the 4 regional dealers was completed ahead of schedule and the ticket is being closed, with no outstanding risks or dependencies mentioned."
+      "ai_reason": "Onboarding for the 4 regional dealers was completed ahead of schedule and the ticket is being closed, with no outstanding dependencies or risks mentioned."
     },
     {
       "update_id": "HND-700",
@@ -303,7 +303,7 @@
       "ground_truth_note": "Risk explicitly raised to leadership on both sides three days ago with no response \u2014 the escalation itself is stalled, not just the technical work.",
       "ai_classification": "blocked",
       "ai_signal": "unowned_escalation",
-      "ai_reason": "The team escalated the repeated cutover slippage to both the Acme account exec and their own VP on 10/21, but received no response from either by the due date (10/24). Progress cannot move forward without executive intervention, and no one has picked up the escalation, so this is a blocked, unowned escalation rather than merely at-risk work."
+      "ai_reason": "The cutover is due today (10/24), but the escalation raised on 10/21 to both the Acme account exec and the vendor's own VP has received no response, leaving a repeated slippage issue (HND-310) with no decision-maker engaged. Progress cannot continue without executive intervention on either side, and the due date has arrived with no resolution."
     },
     {
       "update_id": "HND-95",
@@ -322,7 +322,7 @@
       "ground_truth_note": "Unplanned executive ask superseding previously planned work from the same team this same week \u2014 direct example of the emergency-reprioritization pattern.",
       "ai_classification": "at_risk",
       "ai_signal": "competing_objectives",
-      "ai_reason": "An urgent, unplanned CMO-driven competitor-response campaign has been inserted ahead of the previously planned holiday campaign (HND-402), and sequencing is not yet finalized just one week before the Oct 31 due date. This creates real risk to HND-402's timeline even though the team is confident and actively re-sequencing."
+      "ai_reason": "An unplanned, urgent CMO-driven competitor-response campaign is now being fast-tracked ahead of the previously planned holiday campaign (HND-402), with sequencing not yet finalized just a week before the 10/31 due date. This displacement of planned work by an executive ask threatens the original timeline even though the team believes both can be delivered."
     }
   ]
 }

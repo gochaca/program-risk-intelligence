@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import json
 import os
+import re
 from pathlib import Path
 
 from anthropic import Anthropic
@@ -78,6 +79,13 @@ CLASSIFY_TOOL = {
 }
 
 
+def _strip_stray_tags(text: str) -> str:
+    """Defensive cleanup: on rare occasions the model has echoed a stray
+    closing-tag fragment (e.g. '</reason>\\n</invoke>') onto the end of a
+    free-text field. Cut at the first XML-like closing tag, if any."""
+    return re.split(r"</\w+>", text)[0].strip()
+
+
 def classify_update(update: dict, client: Anthropic | None = None) -> dict:
     """Classify a single status update.
 
@@ -100,7 +108,9 @@ def classify_update(update: dict, client: Anthropic | None = None) -> dict:
     )
 
     tool_use = next(block for block in response.content if block.type == "tool_use")
-    return tool_use.input
+    result = tool_use.input
+    result["reason"] = _strip_stray_tags(result["reason"])
+    return result
 
 
 def main():

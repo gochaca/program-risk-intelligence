@@ -19,6 +19,8 @@ from pathlib import Path
 from anthropic import Anthropic
 from dotenv import load_dotenv
 
+from classify import _strip_stray_tags
+
 load_dotenv()
 
 MODEL = os.environ.get("CLAUDE_MODEL", "claude-sonnet-5")
@@ -115,7 +117,11 @@ def detect_patterns(classified_updates: list[dict], client: Anthropic | None = N
     )
 
     tool_use = next(block for block in response.content if block.type == "tool_use")
-    return tool_use.input["patterns"]
+    patterns = tool_use.input["patterns"]
+    for p in patterns:
+        p["description"] = _strip_stray_tags(p["description"])
+        p["why_it_matters"] = _strip_stray_tags(p["why_it_matters"])
+    return patterns
 
 
 def main():
