@@ -2,7 +2,7 @@
 
 **Status:** Milestone 5 — Evaluation, polish & demo 🚧 (evaluation + polish done, demo recording pending)
 
-An AI tool that ingests status updates from multiple teams and vendors, classifies risk with a stated reason, flags patterns across teams that a single update wouldn't reveal, and auto-drafts the kind of status report I used to write by hand every Friday.
+An AI tool that ingests status updates from multiple teams and vendors, classifies risk with a stated reason, flags patterns across teams that a single update wouldn't reveal, and auto-drafts the kind of status report I used to write by hand every Friday. [Program Risk and Vendor Coordination Intelligence Weekly Status](https://claude.ai/code/artifact/4ce4c387-19b0-4474-aa89-f1066131bba4)
 
 ## The problem
 
