@@ -1,0 +1,52 @@
+[
+  {
+    "jira_ticket": "HND-146",
+    "comment": "Program Risk Intelligence -- weekly classification (2025-10-31)\nStatus: AT_RISK (signal: bottlenecked)\nThe report date is the due date itself (Oct 31), yet website updates are only 'starting this week' after legal finalized copy late. With multiple sites to update and validate and no buffer remaining, the compressed timeline threatens the deadline despite work now moving.",
+    "posted_at": "2026-08-06T19:38:29.066122+00:00"
+  },
+  {
+    "jira_ticket": "HND-146b",
+    "comment": "Program Risk Intelligence -- weekly classification (2025-10-31)\nStatus: AT_RISK (signal: bottlenecked)\nImplementation was stalled behind the release train lock until 10/25, and today (10/31, the due date itself) the team is only just targeting completion on the 30th with zero buffer -- any slip at all misses the deadline. Work is technically moving but the compressed timeline against a same-day due date represents a real threat requiring intervention or contingency planning.",
+    "posted_at": "2026-08-06T19:38:29.066523+00:00"
+  },
+  {
+    "jira_ticket": "HND-146c",
+    "comment": "Program Risk Intelligence -- weekly classification (2025-10-31)\nStatus: BLOCKED (signal: bottlenecked)\nThe due date is today (2025-10-31), yet the team has heard nothing from BrightPath since the request on the 15th, and the CCPA copy cannot be pushed without BrightPath's release calendar confirmation. With no response and no forward movement possible, this is effectively blocked rather than merely at risk, despite the team's hopeful 'Medium' self-rating.",
+    "posted_at": "2026-08-06T19:38:29.066778+00:00"
+  },
+  {
+    "jira_ticket": "HND-89",
+    "comment": "Program Risk Intelligence -- weekly classification (2025-10-31)\nStatus: AT_RISK (signal: competing_objectives)\nThe team has been pulled onto unplanned CCPA copy work and a DSAR audit request from Compliance, causing the consent taxonomy review to slip to next week -- but today, October 31, is the actual due date, so the self-reported 'Low' risk rationale (citing buffer to the 31st) is invalid since the deadline is now. This is a due-date miss driven by competing priorities, not a managed risk.",
+    "posted_at": "2026-08-06T19:38:29.067016+00:00"
+  },
+  {
+    "jira_ticket": "HND-310",
+    "comment": "Program Risk Intelligence -- weekly classification (2025-10-31)\nStatus: AT_RISK (signal: bottlenecked)\nThe cutover rehearsal has now slipped twice in three weeks (10/29 to 11/3) due to staffing shortages, leaving only 4 days of buffer between the rehearsal and the 11/7 cutover date. Given this pattern of repeated slips and the compressed timeline, the vendor's assertion that 11/7 is still achievable is optimistic and not well substantiated, indicating real risk to the due date without intervention.",
+    "posted_at": "2026-08-06T19:38:29.067843+00:00"
+  },
+  {
+    "jira_ticket": "HND-311",
+    "comment": "Program Risk Intelligence -- weekly classification (2025-10-31)\nStatus: BLOCKED (signal: unowned_escalation)\nThe vendor has not responded to two outreach attempts (initial request plus follow-up) with the due date arriving today (2025-10-31), meaning progress cannot move forward without vendor engagement. No one appears to have escalated this non-response to a decision-maker to force action, leaving the security review stalled on the due date itself.",
+    "posted_at": "2026-08-06T19:38:29.068068+00:00"
+  },
+  {
+    "jira_ticket": "HND-95",
+    "comment": "Program Risk Intelligence -- weekly classification (2025-10-31)\nStatus: AT_RISK (signal: competing_objectives)\nThe CMO's office has injected an unplanned competitor-response campaign that must be sequenced against the original holiday campaign due today, and the sequencing plan is not yet locked in, creating real risk to the due date despite the sender's optimism.",
+    "posted_at": "2026-08-06T19:38:29.068298+00:00"
+  },
+  {
+    "jira_ticket": "HND-520",
+    "comment": "Program Risk Intelligence -- weekly classification (2025-10-31)\nStatus: BLOCKED (signal: competing_objectives)\nThe due date (2025-10-24) has already passed as of this report (2025-10-31), and the vendor states the dealer portal work has been fully deprioritized in favor of an urgent Honda firmware defect escalation, with no ETA to resume. Since the item is already past due with no forward movement and no timeline to restart, this is effectively blocked, not just at risk.",
+    "posted_at": "2026-08-06T19:38:29.068542+00:00"
+  },
+  {
+    "jira_ticket": "HND-88",
+    "comment": "Program Risk Intelligence -- weekly classification (2025-10-31)\nStatus: BLOCKED (signal: unowned_escalation)\nThe due date (2025-10-25) has already passed as of this report (2025-10-31), and the team explicitly states the status is unchanged from last week, still waiting on Legal to confirm the consent taxonomy with no forward movement possible until that happens. The sender expresses nervousness but there's no indication anyone has escalated this to a decision-maker to get Legal to act, so the dependency is unowned and stalled past the deadline.",
+    "posted_at": "2026-08-06T19:38:29.068797+00:00"
+  },
+  {
+    "jira_ticket": "HND-611",
+    "comment": "Program Risk Intelligence -- weekly classification (2025-10-31)\nStatus: AT_RISK (signal: competing_objectives)\nThe due date (2025-10-24) has already passed, and an unplanned partner integration emergency has pulled two people off the SSO cert renewal work. While the team claims the deploy will still happen tomorrow, zero buffer remains for a task that's already overdue, making it vulnerable to any further disruption.",
+    "posted_at": "2026-08-06T19:38:29.069049+00:00"
+  }
+]

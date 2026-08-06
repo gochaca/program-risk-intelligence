@@ -107,17 +107,29 @@ def detect_patterns(classified_updates: list[dict], client: Anthropic | None = N
         for update in classified_updates
     ]
 
-    response = client.messages.create(
-        model=MODEL,
-        max_tokens=2000,
-        system=PATTERN_SYSTEM_PROMPT,
-        tools=[PATTERN_TOOL],
-        tool_choice={"type": "tool", "name": "report_cross_source_patterns"},
-        messages=[{"role": "user", "content": json.dumps(batch_for_model, indent=2)}],
-    )
-
-    tool_use = next(block for block in response.content if block.type == "tool_use")
-    patterns = tool_use.input["patterns"]
+    # Forced tool-use occasionally (observed ~twice in dozens of calls during
+    # development) returns a tool_use block missing the expected key -- a
+    # transient API-side glitch, not a prompt problem. One retry has always
+    # been enough; if it fails twice in a row that's a real error, not flakiness.
+    last_error = None
+    for attempt in range(2):
+        response = client.messages.create(
+            model=MODEL,
+            max_tokens=2000,
+            system=PATTERN_SYSTEM_PROMPT,
+            tools=[PATTERN_TOOL],
+            tool_choice={"type": "tool", "name": "report_cross_source_patterns"},
+            messages=[{"role": "user", "content": json.dumps(batch_for_model, indent=2)}],
+        )
+        tool_use = next(block for block in response.content if block.type == "tool_use")
+        try:
+            patterns = tool_use.input["patterns"]
+            break
+        except KeyError as e:
+            last_error = e
+            print(f"detect_patterns: malformed tool response on attempt {attempt + 1}, retrying...")
+    else:
+        raise RuntimeError("detect_patterns: malformed tool response on both attempts") from last_error
     for p in patterns:
         p["description"] = _strip_stray_tags(p["description"])
         p["why_it_matters"] = _strip_stray_tags(p["why_it_matters"])

@@ -1,6 +1,6 @@
 # Program Risk & Vendor Coordination Intelligence
 
-**Status:** Milestone 5 — Evaluation, polish & demo 🚧 (evaluation + polish done, demo recording pending)
+**Status:** Milestone 6 — Live vendor coordination 🚧 (built and tested against mock fixtures; not yet connected to a real Jira/Gmail account)
 
 An AI tool that ingests status updates from multiple teams and vendors, classifies risk with a stated reason, flags patterns across teams that a single update wouldn't reveal, and auto-drafts the kind of status report I used to write by hand every Friday. [Program Risk and Vendor Coordination Intelligence Weekly Status](https://claude.ai/code/artifact/4ce4c387-19b0-4474-aa89-f1066131bba4)
 
@@ -169,25 +169,86 @@ Full per-item results, including reasons given for every miss: [`data/evaluation
 python3 evaluate.py
 ```
 
+## Live vendor coordination (Milestone 6)
+
+Milestones 1-5 run entirely on a static mock dataset. This milestone closes the loop: pull this week's open tickets from Jira, email each owner asking for a status update, follow up only with whoever hasn't replied, then feed whatever came back into the same classify → detect_patterns → generate_report pipeline and write the result back to Jira as a comment.
+
+**Cadence:** first request Wednesday, follow-up Friday morning (non-responders only), report + Jira write-back once replies are in.
+
+### Architecture: Mock and Real behind the same interface
+
+[`jira_client.py`](./jira_client.py) and [`gmail_client.py`](./gmail_client.py) each ship two implementations of the same two methods (`get_roster()`/`post_comment()` for Jira, `create_draft()` for Gmail):
+
+- **Mock** — reads/writes local JSON fixtures (`data/team_roster.json`, `data/mock_drafts.json`, `data/mock_jira_comments.json`). No network calls, no credentials, safe to run any time.
+- **Real** — actual Jira Cloud REST API v3 and Gmail API calls.
+
+`get_jira_client()` / `get_gmail_client()` pick Real vs. Mock automatically based on whether live credentials are configured, so [`weekly_cycle.py`](./weekly_cycle.py) — the orchestrator — never has to know which one it's talking to. This is the same mock-before-live discipline as Milestones 1-5, applied one level up: build and prove the workflow against fixtures, then swap the data source.
+
+### Draft-only, on purpose
+
+The Gmail client only ever calls `users().drafts().create()`. There is no code path to `users().messages().send()` anywhere in this codebase. Every email this tool produces — first request or follow-up — sits in the account's Drafts folder until a human reads it and clicks send. This was a deliberate choice, not a technical limitation: a tool that emails real colleagues on a schedule with zero human review is a much bigger blast radius than one that drafts and waits.
+
+### Real people don't fill in templates
+
+Rather than require a rigid reply format and regex-parse it, [`email_parser.py`](./email_parser.py) uses the same forced-tool-use pattern as `classify.py` to have Claude read a freeform reply and extract the update text and self-reported risk (`null` if the sender didn't actually state one — the parser is told explicitly not to invent a rating). The mock inbox ([`data/mock_inbox.json`](./data/mock_inbox.json)) is written as natural, unstructured email replies specifically to exercise this, not a clean template.
+
+### Silence is still data
+
+A ticket that gets no reply to either request doesn't get dropped — it becomes an explicit "no response to two requests this week" record and goes through classification like everything else, consistent with the `quiet`/`unowned_escalation` signals already in the rubric. In the first simulated run, the one non-responding ticket (`HND-311`, matching its behavior all the way back in the Milestone 1 mock data) correctly classified as `blocked`.
+
+### Running the simulation
+
+```bash
+python3 weekly_cycle.py simulate
+```
+
+Runs all three phases back-to-back against `data/team_roster.json` and `data/mock_inbox.json`: drafts 10 first-request emails, follows up with only the 3 non-responders, collects and parses replies, classifies, detects patterns, generates both report altitudes, and logs 10 "Jira comments" — all locally, no live accounts touched. Output: `data/live_classified_updates.json`, `live_patterns.json`, `live_team_report.md`, `live_exec_report.md`, `mock_drafts.json`, `mock_jira_comments.json`.
+
+First simulated run: 0 tickets on track, 6 at_risk, 4 blocked (this roster is a deliberately risk-heavy subset carried over from the Milestone 1 mock data, not a representative "normal" week), and the exec report correctly rolled all 10 into 5 cross-source patterns with no leftover isolated tickets.
+
+### Connecting real accounts (not done yet)
+
+- **Jira**: set `JIRA_BASE_URL`, `JIRA_EMAIL`, `JIRA_API_TOKEN` (and optionally `JIRA_ROSTER_JQL`) in `.env`. Field mapping (which JQL defines "this week's open tickets," which field holds the initiative name) is written to standard Jira Cloud conventions but will need calibrating against your specific project's schema — every org's is different.
+- **Gmail**: create a Google Cloud OAuth client (Desktop app type), save it as `credentials.json` in this directory (git-ignored), then run `python3 gmail_client.py` once to complete the one-time browser consent flow. Requires `pip3 install google-api-python-client google-auth-httplib2 google-auth-oauthlib` (kept out of `requirements.txt` since mock/simulate mode doesn't need them).
+
+### Known limitations, stated honestly
+
+- **No automated "did they reply yet" check in live mode.** `send_followups()` currently determines non-responders correctly in simulate mode (from the mock inbox), but in live mode there's no code yet that reads the Gmail inbox to check who's actually replied since Wednesday — it would currently follow up with everyone. Reading real replies (via the Gmail API's `messages.list`/`threads.get`) is the next piece to build before this can run live.
+- **Jira field mapping is unverified.** `RealJiraClient` follows documented Jira Cloud REST API v3 conventions but has never been run against a real project — assignee visibility, custom fields, and JQL specifics vary per org and will need adjustment.
+- **No scheduling wired up yet.** The three phases (`first-request`, `followup`, `report`) are built to run as separate scheduled invocations (cron, launchd, etc.) but nothing currently triggers them automatically.
+
 ## Repo structure
 
 ```
 01-program-risk-intelligence/
-├── README.md              # this file
-├── classify.py            # risk classification (Milestone 2)
-├── detect_patterns.py     # cross-source pattern detection (Milestone 3)
-├── generate_report.py     # two-altitude reporting (Milestone 4)
-├── evaluate.py             # evaluation & false positive/negative analysis (Milestone 5)
+├── README.md                # this file
+├── classify.py               # risk classification (Milestone 2)
+├── detect_patterns.py        # cross-source pattern detection (Milestone 3)
+├── generate_report.py        # two-altitude reporting (Milestone 4)
+├── evaluate.py                # evaluation & false positive/negative analysis (Milestone 5)
+├── email_templates.py         # first-request / follow-up email copy (Milestone 6)
+├── email_parser.py            # freeform reply -> structured update, via Claude (Milestone 6)
+├── jira_client.py              # Mock + Real Jira Cloud REST API client (Milestone 6)
+├── gmail_client.py             # Mock + Real Gmail API client, draft-only (Milestone 6)
+├── weekly_cycle.py             # orchestrator: Wed request -> Fri followup -> report (Milestone 6)
 ├── requirements.txt
 ├── .env.example
 └── data/
     ├── mock_status_updates.json
-    ├── eval_scenarios.json      # adversarial test set (Milestone 5)
-    ├── classified_updates.json  # generated by classify.py
-    ├── patterns.json            # generated by detect_patterns.py
-    ├── team_report.md           # generated by generate_report.py
-    ├── exec_report.md           # generated by generate_report.py
-    └── evaluation_report.md     # generated by evaluate.py
+    ├── eval_scenarios.json       # adversarial test set (Milestone 5)
+    ├── team_roster.json           # mock Jira roster (Milestone 6)
+    ├── mock_inbox.json            # simulated email replies (Milestone 6)
+    ├── classified_updates.json   # generated by classify.py
+    ├── patterns.json              # generated by detect_patterns.py
+    ├── team_report.md             # generated by generate_report.py
+    ├── exec_report.md             # generated by generate_report.py
+    ├── evaluation_report.md       # generated by evaluate.py
+    ├── live_classified_updates.json  # generated by weekly_cycle.py
+    ├── live_patterns.json            # generated by weekly_cycle.py
+    ├── live_team_report.md           # generated by weekly_cycle.py
+    ├── live_exec_report.md           # generated by weekly_cycle.py
+    ├── mock_drafts.json               # generated by weekly_cycle.py (MockGmailClient)
+    └── mock_jira_comments.json        # generated by weekly_cycle.py (MockJiraClient)
 ```
 
 ## Demo
@@ -202,3 +263,7 @@ _Recording pending — script at [`DEMO_SCRIPT.md`](./DEMO_SCRIPT.md). Link goes
 - [x] Milestone 4 — Two-altitude reporting (team-level + executive)
 - [x] Milestone 5a — Evaluation & polish — regression 100%, adversarial 62% (0 false positives, 2 false negatives, all detailed above)
 - [ ] Milestone 5b — Record and link demo
+- [x] Milestone 6a — Live vendor coordination design: Jira + Gmail clients, email templates/parsing, Wed/Fri orchestrator — tested end-to-end against mock fixtures
+- [ ] Milestone 6b — Connect real Jira project + Gmail account
+- [ ] Milestone 6c — Read real Gmail replies to detect non-responders (currently only works in simulate mode)
+- [ ] Milestone 6d — Wire up scheduling (cron/launchd) for the three phases

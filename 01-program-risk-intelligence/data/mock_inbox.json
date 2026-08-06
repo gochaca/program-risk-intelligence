@@ -1,0 +1,59 @@
+{
+  "note": "Simulated email replies for testing weekly_cycle.py end-to-end without a real inbox. Deliberately NOT rigidly formatted -- real people don't always fill in a template -- to exercise the AI reply-parsing step in email_parser.py rather than simple string splitting. 'replied_after' controls when collect_responses() sees the reply: first_request (Wed), followup (Fri, only sent to non-responders), or never.",
+  "replies": [
+    {
+      "jira_ticket": "HND-146",
+      "replied_after": "first_request",
+      "from_name": "Priya Nair",
+      "body": "Hi -- update on CCPA: legal finalized copy and sent it over to us, Mobile, and Dealer Systems. We're starting the website updates this week for the Oct 31 date. I'd call this Medium risk mainly because we've got multiple sites to update and validate and only about a week to do it."
+    },
+    {
+      "jira_ticket": "HND-146b",
+      "replied_after": "first_request",
+      "from_name": "Marcus Chen",
+      "body": "Got the CCPA copy from Legal on the 22nd. Problem is our release train is locked through 10/25 for the Q4 security patch, so we can't start implementation until right after that -- targeting the 30th, which is basically no buffer before the 31st deadline. I'd flag this High."
+    },
+    {
+      "jira_ticket": "HND-146c",
+      "replied_after": "first_request",
+      "from_name": "Dana Rowe",
+      "body": "Still waiting on BrightPath to confirm their release calendar so we can push the CCPA copy to dealer-facing sites -- we asked on the 15th and haven't heard back. Assuming they get back to us soon we should still make the date, so I'll say Medium for now."
+    },
+    {
+      "jira_ticket": "HND-89",
+      "replied_after": "first_request",
+      "from_name": "Elena Ford",
+      "body": "Consent taxonomy review is in progress, but this week we got pulled onto the CCPA copy work plus an unplanned DSAR audit request from Compliance, so it's sliding to next week. Low risk from our side -- our own due date isn't until the 31st."
+    },
+    {
+      "jira_ticket": "HND-310",
+      "replied_after": "followup",
+      "from_name": "Tom Reyes",
+      "body": "Apologies for the slow reply -- been heads down. Cutover rehearsal originally set for 10/29 slipped to 11/3, staffing shortage on our end. Second time this has moved in three weeks. Still think we can hit 11/7 for the actual cutover. Call it Medium."
+    },
+    {
+      "jira_ticket": "HND-95",
+      "replied_after": "first_request",
+      "from_name": "Jordan Blake",
+      "body": "New one this week -- CMO's office wants us to fast-track a competitor-response campaign ahead of the holiday campaign we already had planned. Still figuring out sequencing. I think we can deliver both but it's not locked in yet, so Medium risk on the original holiday timeline."
+    },
+    {
+      "jira_ticket": "HND-520",
+      "replied_after": "followup",
+      "from_name": "Sam Okafor",
+      "body": "Sorry for the delay getting back to you. We've been fully heads-down on a firmware defect Honda escalated Monday -- it's taken priority over everything else including the dealer portal release calendar you asked about. No ETA yet on when we can get back to it. I'd call this High risk."
+    },
+    {
+      "jira_ticket": "HND-88",
+      "replied_after": "first_request",
+      "from_name": "Riley Park",
+      "body": "Same as last week honestly -- still waiting on Legal to confirm the consent taxonomy before we can finalize our mapping. Our due date is tomorrow. It's really a dependency on their side, so Medium I guess, though I'm getting nervous about the date."
+    },
+    {
+      "jira_ticket": "HND-611",
+      "replied_after": "first_request",
+      "from_name": "Ade Bello",
+      "body": "New emergency this morning -- a partner integration broke in prod because of an upstream API change on their end. Pulled two people off the SSO cert renewal to deal with it. SSO deploy tomorrow should still be fine but we've got zero buffer left now if anything else comes up. Medium risk."
+    }
+  ]
+}

@@ -10,3 +10,6 @@ dist/
 build/
 .DS_Store
 *.log
+credentials.json
+.gmail_token.json
+01-program-risk-intelligence/data/cycle_state.json

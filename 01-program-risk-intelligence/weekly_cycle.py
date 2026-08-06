@@ -1,0 +1,201 @@
+"""Orchestrates the weekly cadence: Wednesday first request -> Friday morning
+follow-up (non-responders only) -> collect replies -> run the existing
+classify/detect_patterns/generate_report pipeline -> write the AI's
+classification back to Jira as a comment.
+
+Three phases, meant to run as three separate scheduled invocations in
+production (`first-request` Wed morning, `followup` Fri morning, `report` Fri
+once replies are in) -- see README "Running this for real." `simulate` runs
+all three back-to-back against the mock inbox, for testing the whole loop
+locally today.
+
+Uses get_jira_client()/get_gmail_client(), which pick Real vs Mock based on
+whether live credentials are configured -- this file is unchanged either way.
+"""
+from __future__ import annotations
+
+import argparse
+import json
+from datetime import date
+from pathlib import Path
+
+from anthropic import Anthropic
+
+import classify
+import detect_patterns
+import generate_report
+from email_parser import parse_reply_to_update
+from email_templates import first_request_email, followup_email
+from gmail_client import get_gmail_client
+from jira_client import get_jira_client
+
+DATA_DIR = Path(__file__).parent / "data"
+STATE_PATH = DATA_DIR / "cycle_state.json"
+SIMULATED_REPORT_DATE = "2025-10-31"  # a Friday; keeps simulate mode's dates coherent with the mock roster's 2025 due dates
+
+
+def _load_mock_inbox() -> dict[str, dict]:
+    """jira_ticket -> reply record, for simulate mode only."""
+    inbox = json.loads((DATA_DIR / "mock_inbox.json").read_text())["replies"]
+    return {r["jira_ticket"]: r for r in inbox}
+
+
+def _save_state(non_responder_tickets: list[str]) -> None:
+    STATE_PATH.write_text(json.dumps({"awaiting_response": non_responder_tickets}, indent=2))
+
+
+def _load_state() -> list[str]:
+    if not STATE_PATH.exists():
+        return []
+    return json.loads(STATE_PATH.read_text())["awaiting_response"]
+
+
+def send_first_requests(jira_client, gmail_client) -> list[dict]:
+    roster = jira_client.get_roster()
+    for item in roster:
+        email = first_request_email(item)
+        gmail_client.create_draft(**email)
+    _save_state([item["jira_ticket"] for item in roster])
+    print(f"Drafted {len(roster)} first-request emails.")
+    return roster
+
+
+def send_followups(jira_client, gmail_client, mock_inbox: dict[str, dict] | None = None) -> list[str]:
+    """Sends follow-ups only to tickets still marked awaiting_response.
+
+    In simulate mode, mock_inbox tells us who already replied to the first
+    request so we know who to skip. In live mode, that check belongs to
+    whatever marks a ticket as responded (e.g. reading Gmail replies) --
+    not built yet; see README limitations.
+    """
+    roster_by_ticket = {item["jira_ticket"]: item for item in jira_client.get_roster()}
+    awaiting = _load_state()
+
+    if mock_inbox is not None:
+        awaiting = [t for t in awaiting if mock_inbox.get(t, {}).get("replied_after") != "first_request"]
+
+    for ticket in awaiting:
+        email = followup_email(roster_by_ticket[ticket])
+        gmail_client.create_draft(**email)
+
+    _save_state(awaiting)
+    print(f"Drafted {len(awaiting)} follow-up emails (sent only to non-responders).")
+    return awaiting
+
+
+def collect_responses(
+    jira_client,
+    mock_inbox: dict[str, dict] | None = None,
+    client: Anthropic | None = None,
+    report_date: str | None = None,
+) -> list[dict]:
+    """Builds classify.py-shaped update records from whatever replies came in.
+
+    A ticket with no reply at all becomes an explicit "no response" record --
+    silence is data, not a gap, consistent with the 'quiet' signal already in
+    the rubric (see README).
+
+    report_date defaults to today, for live use. Simulate mode passes an
+    explicit date instead -- the mock roster's due dates are fixed 2025
+    dates, and stamping them with the real today would put weeks or months
+    between "report date" and "due date" for no reason, confusing the
+    model's own reasoning about how much runway is left.
+    """
+    client = client or Anthropic()
+    roster = jira_client.get_roster()
+    today = report_date or date.today().isoformat()
+    updates = []
+
+    for item in roster:
+        reply = (mock_inbox or {}).get(item["jira_ticket"])
+        if reply:
+            parsed = parse_reply_to_update(reply["body"], client=client)
+        else:
+            parsed = {
+                "update_text": "No response to two requests this week (first request and follow-up).",
+                "self_reported_risk": None,
+                "self_reported_rationale": None,
+            }
+
+        updates.append(
+            {
+                "team": item["team"],
+                "team_type": item["team_type"],
+                "jira_ticket": item["jira_ticket"],
+                "initiative": item["initiative"],
+                "category": item["category"],
+                "due_date": item["due_date"],
+                "report_date": today,
+                **parsed,
+            }
+        )
+
+    print(f"Collected {len(updates)} updates ({sum(1 for u in updates if u['self_reported_risk'] is None)} non-responses).")
+    return updates
+
+
+def post_classifications_to_jira(jira_client, classified_updates: list[dict]) -> None:
+    for u in classified_updates:
+        comment = (
+            f"Program Risk Intelligence -- weekly classification ({u['report_date']})\n"
+            f"Status: {u['ai_classification'].upper()} (signal: {u['ai_signal']})\n"
+            f"{u['ai_reason']}"
+        )
+        jira_client.post_comment(u["jira_ticket"], comment)
+    print(f"Posted {len(classified_updates)} classification comments to Jira.")
+
+
+def run_report_phase(jira_client, mock_inbox: dict[str, dict] | None = None, report_date: str | None = None) -> None:
+    client = Anthropic()
+    updates = collect_responses(jira_client, mock_inbox=mock_inbox, client=client, report_date=report_date)
+
+    classified = []
+    for u in updates:
+        result = classify.classify_update(u, client=client)
+        classified.append({**u, "ai_classification": result["classification"], "ai_signal": result["signal"], "ai_reason": result["reason"]})
+
+    patterns = detect_patterns.detect_patterns(classified, client=client)
+
+    team_report = generate_report.generate_team_report(classified, patterns, client=client)
+    exec_report = generate_report.generate_exec_report(classified, patterns, client=client)
+
+    (DATA_DIR / "live_classified_updates.json").write_text(json.dumps({"updates": classified}, indent=2))
+    (DATA_DIR / "live_patterns.json").write_text(json.dumps({"patterns": patterns}, indent=2))
+    (DATA_DIR / "live_team_report.md").write_text(team_report)
+    (DATA_DIR / "live_exec_report.md").write_text(exec_report)
+
+    post_classifications_to_jira(jira_client, classified)
+
+    print("\nWrote data/live_classified_updates.json, live_patterns.json, live_team_report.md, live_exec_report.md")
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "phase",
+        choices=["first-request", "followup", "report", "simulate"],
+        help="Which phase to run, or 'simulate' to run the whole week against the mock inbox.",
+    )
+    args = parser.parse_args()
+
+    jira_client = get_jira_client()
+    gmail_client = get_gmail_client()
+
+    if args.phase == "first-request":
+        send_first_requests(jira_client, gmail_client)
+    elif args.phase == "followup":
+        send_followups(jira_client, gmail_client)
+    elif args.phase == "report":
+        run_report_phase(jira_client)
+    elif args.phase == "simulate":
+        mock_inbox = _load_mock_inbox()
+        print("=== Wednesday: first requests ===")
+        send_first_requests(jira_client, gmail_client)
+        print("\n=== Friday morning: follow-ups (non-responders only) ===")
+        send_followups(jira_client, gmail_client, mock_inbox=mock_inbox)
+        print("\n=== Friday: collect, classify, detect patterns, report, post to Jira ===")
+        run_report_phase(jira_client, mock_inbox=mock_inbox, report_date=SIMULATED_REPORT_DATE)
+
+
+if __name__ == "__main__":
+    main()
