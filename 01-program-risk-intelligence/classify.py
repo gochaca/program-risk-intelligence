@@ -4,6 +4,8 @@ Classifies a single status update into on_track / at_risk / blocked, plus a
 signal type (quiet, bottlenecked, competing_objectives, unowned_escalation,
 none) and a stated reason. See README.md for the full rubric definition.
 """
+from __future__ import annotations
+
 import json
 import os
 from pathlib import Path
