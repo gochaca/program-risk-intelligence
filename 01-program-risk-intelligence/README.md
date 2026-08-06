@@ -1,6 +1,6 @@
 # Program Risk & Vendor Coordination Intelligence
 
-**Status:** Milestone 1 — Repo setup & requirements ✅
+**Status:** Milestone 2 — Risk classification build 🚧
 
 An AI tool that ingests status updates from multiple teams and vendors, classifies risk with a stated reason, flags patterns across teams that a single update wouldn't reveal, and auto-drafts the kind of status report I used to write by hand every Friday.
 
@@ -69,21 +69,42 @@ Coverage by signal type (each appears at least twice, several updates carry more
 
 Also included: the CCPA initiative as a 4-ticket chain (`HND-146`, `HND-146b`, `HND-146c`, `HND-201`) spanning three teams plus Legal, and a case (`HND-89`) where the blocking team self-rates its own risk "Low" while blocking another team's "Medium"-rated, due-tomorrow ticket — the exact self-report-vs-reality gap this tool exists to catch.
 
+## Classification build
+
+[`classify.py`](./classify.py) calls the Claude API (`claude-sonnet-5`) to classify a single status update. Design decisions:
+
+- **Rubric lives in the system prompt**, word-for-word matching the classification states and signal types defined above — the model isn't inventing its own risk taxonomy.
+- **Structured output via forced tool use.** Rather than asking for JSON in free text and parsing it, the call uses `tool_choice` to force a `classify_status_update` tool call with an enum-constrained schema (`classification`, `signal`, `reason`). This makes output reliably parseable — no regex/JSON-repair needed.
+- **Ground truth is stripped before the call.** Any `ground_truth_*` field is filtered out of the payload sent to the model — those exist purely for evaluation and would leak the answer.
+- **The model is explicitly told not to defer to self-reported risk.** The rubric instructs it to read the update text and due date and form its own judgment, since the self-report-vs-reality gap (see `HND-88`/`HND-89` in the mock data) is exactly what this tool is supposed to catch.
+
+Running `python classify.py` classifies all 17 mock updates and prints a predicted-vs-ground-truth match rate as a first sanity check. A full accuracy breakdown with false positive/negative analysis is Milestone 5.
+
+### Setup
+
+```bash
+cd 01-program-risk-intelligence
+pip install -r requirements.txt
+cp .env.example .env   # then add your ANTHROPIC_API_KEY
+python classify.py
+```
+
 ## Repo structure
 
 ```
 01-program-risk-intelligence/
 ├── README.md              # this file
+├── classify.py            # risk classification (Milestone 2)
+├── requirements.txt
+├── .env.example
 └── data/
     └── mock_status_updates.json
 ```
 
-(Milestone 2 will add the classification script and its own README section.)
-
 ## Roadmap
 
 - [x] Milestone 1 — Repo setup & requirements
-- [ ] Milestone 2 — Risk classification build (Claude API)
+- [ ] Milestone 2 — Risk classification build (Claude API) — code written, pending test run against mock data
 - [ ] Milestone 3 — Cross-source pattern detection
 - [ ] Milestone 4 — Two-altitude reporting (team-level + executive)
 - [ ] Milestone 5 — Evaluation, polish & demo
