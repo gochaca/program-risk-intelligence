@@ -1,0 +1,65 @@
+{
+  "report_date": "2025-10-24",
+  "patterns": [
+    {
+      "pattern_type": "shared_dependency",
+      "tickets_involved": [
+        "HND-146c",
+        "HND-520"
+      ],
+      "description": "Dealer Systems Integration (HND-146c) is blocked waiting on BrightPath's dealer portal release calendar confirmation since 10/15. BrightPath's own update (HND-520) reveals why: BrightPath is heads-down on an unrelated Honda-escalated firmware defect and has explicitly paused all other requests, including the dealer portal release calendar, with no ETA.",
+      "why_it_matters": "This confirms the root cause of the CCPA dealer-site blocker is not a lost email but a deliberate vendor prioritization decision with no ETA. Program lead should escalate directly to BrightPath leadership (not just wait for a response) and consider a fallback plan for dealer-facing CCPA copy if BrightPath doesn't unpause this week, given the 10/31 deadline."
+    },
+    {
+      "pattern_type": "dependency_chain",
+      "tickets_involved": [
+        "HND-88",
+        "HND-89"
+      ],
+      "description": "CDP Team (HND-88) is blocked waiting on Data Privacy & Legal Ops to confirm the final consent taxonomy, due 10/25. Legal Ops' own update (HND-89) confirms the taxonomy review has been pushed to next week due to competing priorities (CCPA copy and an unplanned EU DSAR audit request).",
+      "why_it_matters": "HND-88's due date (10/25) will be missed with near certainty since the named blocker (HND-89) has already been explicitly delayed to 'next week.' Program lead should reset expectations/due date on HND-88 now rather than let it sit as 'blocked, waiting' and should assess whether the EU DSAR audit or CCPA work can be shifted to unblock taxonomy review sooner."
+    },
+    {
+      "pattern_type": "shared_dependency",
+      "tickets_involved": [
+        "HND-146",
+        "HND-146b",
+        "HND-146c",
+        "HND-201"
+      ],
+      "description": "All four tickets trace back to the same root deliverable: Legal's CCPA copy finalization (HND-201, completed 10/20) triggering downstream implementation across Web Platform, Mobile, and Dealer Systems. Two of the three downstream teams (Mobile via security patch lock, Dealer Systems via BrightPath) report distinct blockers that both threaten the same 10/31 program deadline.\n",
+      "why_it_matters": "This is a single initiative with multiple parallel single-point-of-failure paths converging on 10/31. Program lead should track this as one consolidated risk item rather than four separate tickets, and proactively confirm Web Platform's own implementation status (currently unreported) since it's the only team without a stated blocker or start update."
+    },
+    {
+      "pattern_type": "team_overload",
+      "tickets_involved": [
+        "HND-610",
+        "HND-611"
+      ],
+      "description": "Enterprise IAM's SSO certificate renewal (HND-610, on track for 10/25) had two engineers pulled off it to triage an unplanned partner integration production incident (HND-611), leaving the SSO deploy with zero schedule buffer.",
+      "why_it_matters": "Individually HND-610 looks on-track and HND-611 looks contained, but together they show the team has no slack left if the incident reopens or drags on. Program lead should check in before 10/25 deploy and consider temporary resourcing support rather than assuming the SSO date is safe."
+    },
+    {
+      "pattern_type": "systemic_theme",
+      "tickets_involved": [
+        "HND-146b",
+        "HND-520",
+        "HND-89",
+        "HND-611",
+        "HND-95"
+      ],
+      "description": "Five separate teams/vendors across unrelated initiatives (Mobile security patch, BrightPath firmware defect, Legal DSAR audit, IAM partner incident, Marketing CMO request) all report the same competing_objectives signal this week: planned work being displaced by unplanned/escalated priorities.",
+      "why_it_matters": "This is not isolated bad luck on one team but a program-wide pattern of emergencies and executive asks bumping planned commitments with little buffer. Program lead should raise this at the portfolio level -- e.g., review intake/escalation process for 'urgent' requests -- since it's compressing timelines across regulatory, infrastructure, and marketing workstreams simultaneously."
+    },
+    {
+      "pattern_type": "team_overload",
+      "tickets_involved": [
+        "HND-310",
+        "HND-311",
+        "HND-700"
+      ],
+      "description": "Acme Cloud Infrastructure has three tickets this week: a second rehearsal reschedule due to staffing shortage (HND-310), a missed/quiet status update on the security review due in a week (HND-311), and an unanswered executive escalation about the repeated slippage (HND-700).",
+      "why_it_matters": "Individually each looks manageable, but together they show a vendor that is stretched thin across parallel workstreams on the same migration and is not responding to escalation. Program lead should treat this as a single vendor-health issue and force a response from Acme leadership this week rather than tracking three separate risks."
+    }
+  ]
+}

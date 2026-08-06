@@ -105,11 +105,13 @@ def classify_update(update: dict, client: Anthropic | None = None) -> dict:
 
 def main():
     data_path = Path(__file__).parent / "data" / "mock_status_updates.json"
+    output_path = Path(__file__).parent / "data" / "classified_updates.json"
     data = json.loads(data_path.read_text())
 
     client = Anthropic()
     correct = 0
     total = 0
+    classified = []
 
     for update in data["updates"]:
         result = classify_update(update, client=client)
@@ -124,8 +126,20 @@ def main():
         print(f"           signal={result['signal']:20} reason={result['reason']}")
         print()
 
+        classified.append(
+            {
+                **update,
+                "ai_classification": result["classification"],
+                "ai_signal": result["signal"],
+                "ai_reason": result["reason"],
+            }
+        )
+
     if total:
         print(f"Classification match rate vs ground truth: {correct}/{total} ({correct / total:.0%})")
+
+    output_path.write_text(json.dumps({"report_date": data["report_date"], "updates": classified}, indent=2))
+    print(f"\nWrote classified output to {output_path.relative_to(Path(__file__).parent)}")
 
 
 if __name__ == "__main__":
