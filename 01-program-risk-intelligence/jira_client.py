@@ -6,11 +6,13 @@ so weekly_cycle.py doesn't change when a real Jira project gets connected:
 
 - MockJiraClient: reads data/team_roster.json, logs comments locally to
   data/mock_jira_comments.json. No network calls, safe to run any time.
-- RealJiraClient: Jira Cloud REST API v3 (requests + an API token). Field
-  mapping (which JQL finds "this week's open tickets," which custom field (if
-  any) holds the initiative name) is written to standard Jira Cloud
-  conventions but WILL need calibrating against your actual project -- every
-  Jira instance's schema differs. Not exercised yet; no live credentials.
+- RealJiraClient: Jira Cloud REST API v3 (requests + an API token). Validated
+  against a real Jira Cloud test project (get_roster() and post_comment()
+  both confirmed working end to end). Field mapping (which JQL finds "this
+  week's open tickets," which custom field holds the initiative name) is
+  still project-specific -- what's here matches one real project's schema,
+  but expect to adjust JIRA_INITIATIVE_FIELD/JIRA_CATEGORY_FIELD/
+  JIRA_TEAM_SOURCE for a different one.
 """
 from __future__ import annotations
 
@@ -50,6 +52,11 @@ class RealJiraClient:
     JIRA_API_TOKEN in the environment. JIRA_ROSTER_JQL selects which tickets
     count as "this week's open asks" -- e.g. a saved filter's JQL string.
 
+    Team comes from a label or a component, not the project name -- for a
+    single shared project (one per-org Jira project, many teams), the
+    project name is the same for every ticket and useless as "team." Set
+    JIRA_TEAM_SOURCE=label (default) or JIRA_TEAM_SOURCE=component.
+
     Field mapping note: this reads the standard 'assignee' and 'duedate'
     fields and expects the assignee to have a public emailAddress (Jira Cloud
     can hide this depending on org privacy settings -- if so, you'll need to
@@ -68,15 +75,25 @@ class RealJiraClient:
         self.roster_jql = os.environ.get("JIRA_ROSTER_JQL", "resolution = Unresolved ORDER BY duedate ASC")
         self.initiative_field = os.environ.get("JIRA_INITIATIVE_FIELD", "summary")
         self.category_field = os.environ.get("JIRA_CATEGORY_FIELD")
+        self.team_source = os.environ.get("JIRA_TEAM_SOURCE", "label")  # "label" or "component"
+
+    def _team_from_fields(self, fields: dict) -> str:
+        if self.team_source == "component":
+            components = fields.get("components") or []
+            return components[0]["name"] if components else "Unassigned Team"
+        labels = fields.get("labels") or []
+        return labels[0] if labels else "Unassigned Team"
 
     def get_roster(self) -> list[dict]:
-        resp = self._requests.get(
-            f"{self.base_url}/rest/api/3/search",
+        # /rest/api/3/search (GET) is deprecated (410 Gone) -- /rest/api/3/search/jql
+        # (POST) is the current replacement.
+        fields = ["summary", "assignee", "duedate", "labels", "components"]
+        if self.category_field:
+            fields.append(self.category_field)
+        resp = self._requests.post(
+            f"{self.base_url}/rest/api/3/search/jql",
             auth=self.auth,
-            params={
-                "jql": self.roster_jql,
-                "fields": "summary,assignee,duedate,labels,project," + (self.category_field or ""),
-            },
+            json={"jql": self.roster_jql, "fields": fields},
         )
         resp.raise_for_status()
         roster = []
@@ -85,7 +102,7 @@ class RealJiraClient:
             assignee = fields.get("assignee") or {}
             roster.append(
                 {
-                    "team": fields.get("project", {}).get("name", "Unknown Team"),
+                    "team": self._team_from_fields(fields),
                     "team_type": "internal",
                     "jira_ticket": issue["key"],
                     "initiative": fields.get(self.initiative_field, fields.get("summary", "")),

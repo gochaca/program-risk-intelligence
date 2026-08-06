@@ -1,6 +1,6 @@
 # Program Risk & Vendor Coordination Intelligence
 
-**Status:** Milestone 6 — Live vendor coordination 🚧 (built and tested against mock fixtures; not yet connected to a real Jira/Gmail account)
+**Status:** Milestone 6 — Live vendor coordination 🚧 (Jira connected and validated against a real test project; Gmail still mock-only)
 
 An AI tool that ingests status updates from multiple teams and vendors, classifies risk with a stated reason, flags patterns across teams that a single update wouldn't reveal, and auto-drafts the kind of status report I used to write by hand every Friday. [Program Risk and Vendor Coordination Intelligence Weekly Status](https://claude.ai/code/artifact/4ce4c387-19b0-4474-aa89-f1066131bba4)
 
@@ -206,15 +206,27 @@ Runs all three phases back-to-back against `data/team_roster.json` and `data/moc
 
 First simulated run: 0 tickets on track, 6 at_risk, 4 blocked (this roster is a deliberately risk-heavy subset carried over from the Milestone 1 mock data, not a representative "normal" week), and the exec report correctly rolled all 10 into 5 cross-source patterns with no leftover isolated tickets.
 
-### Connecting real accounts (not done yet)
+### Connecting real accounts
 
-- **Jira**: set `JIRA_BASE_URL`, `JIRA_EMAIL`, `JIRA_API_TOKEN` (and optionally `JIRA_ROSTER_JQL`) in `.env`. Field mapping (which JQL defines "this week's open tickets," which field holds the initiative name) is written to standard Jira Cloud conventions but will need calibrating against your specific project's schema — every org's is different.
-- **Gmail**: create a Google Cloud OAuth client (Desktop app type), save it as `credentials.json` in this directory (git-ignored), then run `python3 gmail_client.py` once to complete the one-time browser consent flow. Requires `pip3 install google-api-python-client google-auth-httplib2 google-auth-oauthlib` (kept out of `requirements.txt` since mock/simulate mode doesn't need them).
+**Jira — connected and validated.** Set `JIRA_BASE_URL`, `JIRA_EMAIL`, `JIRA_API_TOKEN`, `JIRA_ROSTER_JQL`, and `JIRA_TEAM_SOURCE` in `.env`. Tested end-to-end against a real Jira Cloud test project (`CRH`): created 10 test tickets (one per team, labeled by team since a single shared project has no per-team project name to key off of), assigned them, then ran `get_roster()` and `post_comment()` against them for real. Two real bugs turned up in the process and got fixed:
+
+- **`GET /rest/api/3/search` is deprecated** — Atlassian retired it in favor of `POST /rest/api/3/search/jql`, returning `410 Gone` on the old endpoint. `RealJiraClient.get_roster()` now uses the current one.
+- **Tickets with no assignee have no email to send to.** The real project had one pre-existing ticket with no assignee; the orchestrator would have tried to draft an email to `None`. `send_first_requests()` now skips (and logs) any roster item with no `contact_email` rather than failing or drafting a broken email.
+
+`JIRA_TEAM_SOURCE=label` reads the first label on a ticket as its "team" — set `JIRA_TEAM_SOURCE=component` instead if your project uses components for that.
+
+**Gmail — not connected yet.** Create a Google Cloud OAuth client (Desktop app type), save it as `credentials.json` in this directory (git-ignored), then run `python3 gmail_client.py` once to complete the one-time browser consent flow. Requires `pip3 install google-api-python-client google-auth-httplib2 google-auth-oauthlib` (kept out of `requirements.txt` since mock/simulate mode doesn't need them).
+
+### A real incident, and the fix
+
+While testing the real Jira connection, `python3 weekly_cycle.py simulate` was run to regenerate the mock demo artifacts — but at the time, `simulate` used `get_jira_client()`, which auto-selects Real vs. Mock based on whatever's configured in the environment. Since real Jira credentials were now set, `simulate` silently ran against the **real** `CRH` project instead of the mock fixtures, and posted 11 nonsense "no response" comments (built from the old 2025 mock inbox, which has nothing matching real `CRH-xxx` keys) onto real tickets.
+
+Caught by inspecting the actual comments before assuming success, and fixed properly rather than papered over: `simulate` now always instantiates `MockJiraClient()`/`MockGmailClient()` directly, regardless of what's configured — a mode whose entire purpose is a safe local test must not be able to touch a real account just because credentials happen to be present. The 11 bad comments were deleted via the API afterward. Documenting this here rather than quietly cleaning it up, since "the mock/live switch was a shared code path with a footgun in it" is exactly the kind of thing worth being honest about in a project whose whole pitch is catching risk before it becomes a blocker.
 
 ### Known limitations, stated honestly
 
 - **No automated "did they reply yet" check in live mode.** `send_followups()` currently determines non-responders correctly in simulate mode (from the mock inbox), but in live mode there's no code yet that reads the Gmail inbox to check who's actually replied since Wednesday — it would currently follow up with everyone. Reading real replies (via the Gmail API's `messages.list`/`threads.get`) is the next piece to build before this can run live.
-- **Jira field mapping is unverified.** `RealJiraClient` follows documented Jira Cloud REST API v3 conventions but has never been run against a real project — assignee visibility, custom fields, and JQL specifics vary per org and will need adjustment.
+- **Gmail side is still mock-only.** Real Jira read/write is validated; real Gmail draft creation (OAuth flow, `RealGmailClient`) is written but has not been exercised against a live account yet.
 - **No scheduling wired up yet.** The three phases (`first-request`, `followup`, `report`) are built to run as separate scheduled invocations (cron, launchd, etc.) but nothing currently triggers them automatically.
 
 ## Repo structure
@@ -264,6 +276,7 @@ _Recording pending — script at [`DEMO_SCRIPT.md`](./DEMO_SCRIPT.md). Link goes
 - [x] Milestone 5a — Evaluation & polish — regression 100%, adversarial 62% (0 false positives, 2 false negatives, all detailed above)
 - [ ] Milestone 5b — Record and link demo
 - [x] Milestone 6a — Live vendor coordination design: Jira + Gmail clients, email templates/parsing, Wed/Fri orchestrator — tested end-to-end against mock fixtures
-- [ ] Milestone 6b — Connect real Jira project + Gmail account
-- [ ] Milestone 6c — Read real Gmail replies to detect non-responders (currently only works in simulate mode)
-- [ ] Milestone 6d — Wire up scheduling (cron/launchd) for the three phases
+- [x] Milestone 6b — Connect real Jira test project (`CRH`) — validated `get_roster()`/`post_comment()` against 10 real tickets; fixed a deprecated-endpoint bug and a simulate-mode safety bug found in the process
+- [ ] Milestone 6c — Connect real Gmail account
+- [ ] Milestone 6d — Read real Gmail replies to detect non-responders (currently only works in simulate mode)
+- [ ] Milestone 6e — Wire up scheduling (cron/launchd) for the three phases

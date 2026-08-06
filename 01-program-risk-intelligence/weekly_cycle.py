@@ -9,8 +9,12 @@ once replies are in) -- see README "Running this for real." `simulate` runs
 all three back-to-back against the mock inbox, for testing the whole loop
 locally today.
 
-Uses get_jira_client()/get_gmail_client(), which pick Real vs Mock based on
-whether live credentials are configured -- this file is unchanged either way.
+`first-request`/`followup`/`report` use get_jira_client()/get_gmail_client(),
+which pick Real vs Mock based on whether live credentials are configured.
+`simulate` is the exception: it ALWAYS uses MockJiraClient/MockGmailClient
+explicitly, regardless of what's configured in the environment, because its
+entire purpose is a safe local test -- it must never write to a real Jira
+project or Gmail account just because credentials happen to be set.
 """
 from __future__ import annotations
 
@@ -26,8 +30,8 @@ import detect_patterns
 import generate_report
 from email_parser import parse_reply_to_update
 from email_templates import first_request_email, followup_email
-from gmail_client import get_gmail_client
-from jira_client import get_jira_client
+from gmail_client import MockGmailClient, get_gmail_client
+from jira_client import MockJiraClient, get_jira_client
 
 DATA_DIR = Path(__file__).parent / "data"
 STATE_PATH = DATA_DIR / "cycle_state.json"
@@ -52,11 +56,18 @@ def _load_state() -> list[str]:
 
 def send_first_requests(jira_client, gmail_client) -> list[dict]:
     roster = jira_client.get_roster()
+    skipped = [item for item in roster if not item.get("contact_email")]
+    roster = [item for item in roster if item.get("contact_email")]
+
     for item in roster:
         email = first_request_email(item)
         gmail_client.create_draft(**email)
+
+    for item in skipped:
+        print(f"Skipping {item['jira_ticket']} ({item['initiative']!r}) -- no assignee/contact email to send to.")
+
     _save_state([item["jira_ticket"] for item in roster])
-    print(f"Drafted {len(roster)} first-request emails.")
+    print(f"Drafted {len(roster)} first-request emails ({len(skipped)} skipped, no contact).")
     return roster
 
 
@@ -178,6 +189,21 @@ def main():
     )
     args = parser.parse_args()
 
+    if args.phase == "simulate":
+        # Always mock, regardless of configured credentials -- simulate's
+        # entire purpose is a safe local test. It must never touch a real
+        # Jira project or Gmail account even if live credentials are set.
+        jira_client = MockJiraClient()
+        gmail_client = MockGmailClient()
+        mock_inbox = _load_mock_inbox()
+        print("=== Wednesday: first requests ===")
+        send_first_requests(jira_client, gmail_client)
+        print("\n=== Friday morning: follow-ups (non-responders only) ===")
+        send_followups(jira_client, gmail_client, mock_inbox=mock_inbox)
+        print("\n=== Friday: collect, classify, detect patterns, report, post to Jira ===")
+        run_report_phase(jira_client, mock_inbox=mock_inbox, report_date=SIMULATED_REPORT_DATE)
+        return
+
     jira_client = get_jira_client()
     gmail_client = get_gmail_client()
 
@@ -187,14 +213,6 @@ def main():
         send_followups(jira_client, gmail_client)
     elif args.phase == "report":
         run_report_phase(jira_client)
-    elif args.phase == "simulate":
-        mock_inbox = _load_mock_inbox()
-        print("=== Wednesday: first requests ===")
-        send_first_requests(jira_client, gmail_client)
-        print("\n=== Friday morning: follow-ups (non-responders only) ===")
-        send_followups(jira_client, gmail_client, mock_inbox=mock_inbox)
-        print("\n=== Friday: collect, classify, detect patterns, report, post to Jira ===")
-        run_report_phase(jira_client, mock_inbox=mock_inbox, report_date=SIMULATED_REPORT_DATE)
 
 
 if __name__ == "__main__":
