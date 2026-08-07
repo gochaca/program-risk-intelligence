@@ -1,6 +1,6 @@
 # Program Risk & Vendor Coordination Intelligence
 
-**Status:** Milestone 6 — Live vendor coordination ✅ (full loop validated end-to-end against real Jira + Gmail; scheduling built, not yet activated)
+**Status:** Milestone 6 — Live vendor coordination ✅ (full loop validated end-to-end against real Jira + Gmail; scheduling active through 2026-08-14, then auto-stops)
 
 An AI tool that ingests status updates from multiple teams and vendors, classifies risk with a stated reason, flags patterns across teams that a single update wouldn't reveal, and auto-drafts the kind of status report I used to write by hand every Friday. [Program Risk and Vendor Coordination Intelligence Weekly Status](https://claude.ai/code/artifact/4ce4c387-19b0-4474-aa89-f1066131bba4)
 
@@ -264,7 +264,16 @@ cd 01-program-risk-intelligence/launchd
 ./uninstall_scheduling.sh  # stops and removes them
 ```
 
-**Built, not activated.** Once installed, this runs completely unattended — no chat session, no confirmation per run: real emails get drafted, real Jira comments get posted, on a schedule, indefinitely. That's a meaningfully bigger blast radius than anything else in this project so far (everything up to now needed a human to type a command), so it's staying off until deliberately turned on.
+**Active.** Installed via `install_scheduling.sh` and confirmed registered (`launchctl list | grep programriskintelligence`). This now runs completely unattended — no chat session, no confirmation per run: real emails get drafted, real Jira comments get posted, on a schedule. That's a meaningfully bigger blast radius than anything else in this project (everything before this needed a human to type a command), which is exactly why it stayed off until deliberately turned on, and why it has a built-in stop condition rather than running forever (below).
+
+### A hard stop, not indefinite
+
+launchd's `StartCalendarInterval` is built for pure recurrence, like cron — there's no year field, no native way to say "run weekly, but only until a date." So the cutoff is enforced in the script itself: `SCHEDULING_END_DATE` in `.env` (currently `2026-08-14`, a Friday, so that week's full cycle still completes). Every live-mode run checks this first, via `_past_scheduling_cutoff()`. Once today is past that date:
+
+- The run does no real work (no emails drafted, no Jira writes).
+- It automatically runs `uninstall_scheduling.sh`, deregistering all three launchd jobs — so they stop existing entirely, not just silently no-op forever.
+
+The comparison is inclusive (`_is_past_cutoff()`, unit-tested separately from the uninstall side effect so the logic could be verified without risking an accidental real uninstall of the jobs that were just activated): the end date itself still runs normally, only days after it are blocked. Leave `SCHEDULING_END_DATE` unset to run indefinitely instead.
 
 ### Known limitations, stated honestly
 
@@ -323,4 +332,4 @@ _Recording pending — script at [`DEMO_SCRIPT.md`](./DEMO_SCRIPT.md). Link goes
 - [x] Milestone 6b — Connect real Jira test project (`CRH`) — validated `get_roster()`/`post_comment()` against 10 real tickets; fixed a deprecated-endpoint bug and a simulate-mode safety bug found in the process
 - [x] Milestone 6c — Connect real Gmail account — OAuth flow completed (needed adding the account as a Test user first, or Google returns `Error 403: access_denied`); `create_draft()` and inbox search both validated with 10 real drafts
 - [x] Milestone 6d — Build and validate real reply-detection end to end — a second test address (`ai.chaca69420@gmail.com`) replied for real, `find_reply()` found it, the parser extracted a structured update from it, and `python3 weekly_cycle.py report` classified it correctly (`on_track`) alongside 9 genuine non-responses, with cross-source patterns and both report altitudes generated from real data and posted back to real Jira tickets
-- [x] Milestone 6e — Build scheduling (`launchd/`, 3 agents: Wed 9am / Fri 8am / Fri 3pm) with install/uninstall scripts — built and validated with `plutil -lint`, deliberately left inactive until explicitly turned on
+- [x] Milestone 6e — Build and activate scheduling (`launchd/`, 3 agents: Wed 9am / Fri 8am / Fri 3pm) with install/uninstall scripts and a `SCHEDULING_END_DATE` cutoff so it stops (and self-uninstalls) after 2026-08-14 instead of running indefinitely — active now, confirmed registered with launchd

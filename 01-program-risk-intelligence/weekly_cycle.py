@@ -21,10 +21,15 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
+import subprocess
 from datetime import date
 from pathlib import Path
 
 from anthropic import Anthropic
+from dotenv import load_dotenv
+
+load_dotenv()
 
 import classify
 import detect_patterns
@@ -43,6 +48,39 @@ def _load_mock_inbox() -> dict[str, dict]:
     """jira_ticket -> reply record, for simulate mode only."""
     inbox = json.loads((DATA_DIR / "mock_inbox.json").read_text())["replies"]
     return {r["jira_ticket"]: r for r in inbox}
+
+
+def _past_scheduling_cutoff() -> bool:
+    """True if today is after SCHEDULING_END_DATE (set in .env, optional).
+
+    launchd's StartCalendarInterval has no expiration concept -- it's built
+    for pure recurrence, like cron, with no year field at all. So the cutoff
+    is enforced here instead: once past the end date, a live-mode run does
+    no real work AND uninstalls all three launchd jobs, so they stop firing
+    entirely rather than silently no-op-ing forever. The end date itself
+    still runs normally (inclusive) -- only days after it are blocked.
+
+    Only applies to first-request/followup/report; simulate mode is a local
+    test tool, not a scheduled email, and is unaffected.
+    """
+    end_date_str = os.environ.get("SCHEDULING_END_DATE")
+    if not _is_past_cutoff(end_date_str, date.today()):
+        return False
+
+    print(f"Past SCHEDULING_END_DATE ({end_date_str}) -- uninstalling scheduled jobs, skipping this run.")
+    uninstall_script = Path(__file__).parent / "launchd" / "uninstall_scheduling.sh"
+    if uninstall_script.exists():
+        subprocess.run(["bash", str(uninstall_script)], check=False)
+    return True
+
+
+def _is_past_cutoff(end_date_str: str | None, today: date) -> bool:
+    """Pure date comparison, kept separate from _past_scheduling_cutoff()'s
+    side effect (uninstalling launchd jobs) so it's unit-testable without
+    risking an accidental real uninstall."""
+    if not end_date_str:
+        return False
+    return today > date.fromisoformat(end_date_str)
 
 
 def _save_state(awaiting_response: list[str], sent_at: str | None = None) -> None:
@@ -235,6 +273,9 @@ def main():
         send_followups(jira_client, gmail_client, mock_inbox=mock_inbox)
         print("\n=== Friday: collect, classify, detect patterns, report, post to Jira ===")
         run_report_phase(jira_client, mock_inbox=mock_inbox, report_date=SIMULATED_REPORT_DATE)
+        return
+
+    if _past_scheduling_cutoff():
         return
 
     jira_client = get_jira_client()
