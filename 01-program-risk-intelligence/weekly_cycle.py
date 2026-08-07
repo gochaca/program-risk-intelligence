@@ -1,5 +1,6 @@
 """Orchestrates the weekly cadence: Wednesday first request -> Friday morning
-follow-up (non-responders only) -> collect replies -> run the existing
+follow-up (non-responders only, determined by actually checking the inbox for
+replies in live mode) -> collect replies -> run the existing
 classify/detect_patterns/generate_report pipeline -> write the AI's
 classification back to Jira as a comment.
 
@@ -44,14 +45,16 @@ def _load_mock_inbox() -> dict[str, dict]:
     return {r["jira_ticket"]: r for r in inbox}
 
 
-def _save_state(non_responder_tickets: list[str]) -> None:
-    STATE_PATH.write_text(json.dumps({"awaiting_response": non_responder_tickets}, indent=2))
+def _save_state(awaiting_response: list[str], sent_at: str | None = None) -> None:
+    if sent_at is None:
+        sent_at = _load_state().get("sent_at")
+    STATE_PATH.write_text(json.dumps({"awaiting_response": awaiting_response, "sent_at": sent_at}, indent=2))
 
 
-def _load_state() -> list[str]:
+def _load_state() -> dict:
     if not STATE_PATH.exists():
-        return []
-    return json.loads(STATE_PATH.read_text())["awaiting_response"]
+        return {"awaiting_response": [], "sent_at": None}
+    return json.loads(STATE_PATH.read_text())
 
 
 def send_first_requests(jira_client, gmail_client) -> list[dict]:
@@ -66,7 +69,7 @@ def send_first_requests(jira_client, gmail_client) -> list[dict]:
     for item in skipped:
         print(f"Skipping {item['jira_ticket']} ({item['initiative']!r}) -- no assignee/contact email to send to.")
 
-    _save_state([item["jira_ticket"] for item in roster])
+    _save_state([item["jira_ticket"] for item in roster], sent_at=date.today().isoformat())
     print(f"Drafted {len(roster)} first-request emails ({len(skipped)} skipped, no contact).")
     return roster
 
@@ -75,30 +78,44 @@ def send_followups(jira_client, gmail_client, mock_inbox: dict[str, dict] | None
     """Sends follow-ups only to tickets still marked awaiting_response.
 
     In simulate mode, mock_inbox tells us who already replied to the first
-    request so we know who to skip. In live mode, that check belongs to
-    whatever marks a ticket as responded (e.g. reading Gmail replies) --
-    not built yet; see README limitations.
+    request so we know who to skip. In live mode, checks the real inbox via
+    gmail_client.find_reply() for each awaiting ticket, searching since the
+    first request was sent (tracked in cycle_state.json) -- anyone who's
+    already replied gets dropped from state instead of getting a redundant
+    follow-up.
     """
     roster_by_ticket = {item["jira_ticket"]: item for item in jira_client.get_roster()}
-    awaiting = _load_state()
+    state = _load_state()
+    awaiting = state["awaiting_response"]
+    sent_at = state.get("sent_at") or date.today().isoformat()
 
     if mock_inbox is not None:
         awaiting = [t for t in awaiting if mock_inbox.get(t, {}).get("replied_after") != "first_request"]
+    else:
+        still_awaiting = []
+        for ticket in awaiting:
+            if gmail_client.find_reply(ticket, since_date=sent_at):
+                print(f"{ticket}: reply already received, skipping follow-up.")
+            else:
+                still_awaiting.append(ticket)
+        awaiting = still_awaiting
 
     for ticket in awaiting:
         email = followup_email(roster_by_ticket[ticket])
         gmail_client.create_draft(**email)
 
-    _save_state(awaiting)
+    _save_state(awaiting, sent_at=sent_at)
     print(f"Drafted {len(awaiting)} follow-up emails (sent only to non-responders).")
     return awaiting
 
 
 def collect_responses(
     jira_client,
+    gmail_client=None,
     mock_inbox: dict[str, dict] | None = None,
     client: Anthropic | None = None,
     report_date: str | None = None,
+    since_date: str | None = None,
 ) -> list[dict]:
     """Builds classify.py-shaped update records from whatever replies came in.
 
@@ -111,16 +128,28 @@ def collect_responses(
     dates, and stamping them with the real today would put weeks or months
     between "report date" and "due date" for no reason, confusing the
     model's own reasoning about how much runway is left.
+
+    In live mode (mock_inbox=None), looks up each ticket's reply via
+    gmail_client.find_reply(), searching since_date onward (defaults to
+    when the first request was sent, per cycle_state.json).
     """
     client = client or Anthropic()
     roster = jira_client.get_roster()
     today = report_date or date.today().isoformat()
+    since = since_date or _load_state().get("sent_at") or today
     updates = []
 
     for item in roster:
-        reply = (mock_inbox or {}).get(item["jira_ticket"])
-        if reply:
-            parsed = parse_reply_to_update(reply["body"], client=client)
+        if mock_inbox is not None:
+            reply = mock_inbox.get(item["jira_ticket"])
+            reply_body = reply["body"] if reply else None
+        elif gmail_client is not None:
+            reply_body = gmail_client.find_reply(item["jira_ticket"], since_date=since)
+        else:
+            reply_body = None
+
+        if reply_body:
+            parsed = parse_reply_to_update(reply_body, client=client)
         else:
             parsed = {
                 "update_text": "No response to two requests this week (first request and follow-up).",
@@ -156,9 +185,9 @@ def post_classifications_to_jira(jira_client, classified_updates: list[dict]) ->
     print(f"Posted {len(classified_updates)} classification comments to Jira.")
 
 
-def run_report_phase(jira_client, mock_inbox: dict[str, dict] | None = None, report_date: str | None = None) -> None:
+def run_report_phase(jira_client, gmail_client=None, mock_inbox: dict[str, dict] | None = None, report_date: str | None = None) -> None:
     client = Anthropic()
-    updates = collect_responses(jira_client, mock_inbox=mock_inbox, client=client, report_date=report_date)
+    updates = collect_responses(jira_client, gmail_client=gmail_client, mock_inbox=mock_inbox, client=client, report_date=report_date)
 
     classified = []
     for u in updates:
@@ -212,7 +241,7 @@ def main():
     elif args.phase == "followup":
         send_followups(jira_client, gmail_client)
     elif args.phase == "report":
-        run_report_phase(jira_client)
+        run_report_phase(jira_client, gmail_client=gmail_client)
 
 
 if __name__ == "__main__":

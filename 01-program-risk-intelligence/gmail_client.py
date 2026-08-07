@@ -21,12 +21,16 @@ from pathlib import Path
 
 DATA_DIR = Path(__file__).parent / "data"
 TOKEN_PATH = Path(__file__).parent / ".gmail_token.json"
-GMAIL_SCOPES = ["https://www.googleapis.com/auth/gmail.compose"]
+GMAIL_SCOPES = [
+    "https://www.googleapis.com/auth/gmail.compose",
+    "https://www.googleapis.com/auth/gmail.readonly",  # needed for find_reply()
+]
 
 
 class MockGmailClient:
-    def __init__(self, log_path: Path | None = None):
+    def __init__(self, log_path: Path | None = None, simulated_replies: dict[str, str] | None = None):
         self.log_path = log_path or DATA_DIR / "mock_drafts.json"
+        self.simulated_replies = simulated_replies or {}
 
     def create_draft(self, to: str, subject: str, body: str) -> dict:
         log = []
@@ -43,9 +47,18 @@ class MockGmailClient:
         print(f"[MockGmailClient] draft logged -> {to} | {subject}")
         return draft
 
+    def find_reply(self, jira_ticket: str, since_date: str) -> str | None:
+        """No live inbox in mock mode -- looks up whatever was passed in at
+        construction, if anything. weekly_cycle.py's `simulate` phase doesn't
+        use this at all; it has its own explicit mock_inbox handling instead."""
+        return self.simulated_replies.get(jira_ticket)
+
 
 class RealGmailClient:
-    """Gmail API, drafts.compose scope only -- deliberately cannot send.
+    """Gmail API. Draft creation only -- there is no code path to
+    users().messages().send() anywhere in this file, deliberately. Also reads
+    (gmail.readonly scope) to find replies, since knowing who's responded is
+    read-only.
 
     Setup: create a Google Cloud OAuth client (Desktop app type), download it
     as credentials.json into this directory, then run this module directly
@@ -83,6 +96,37 @@ class RealGmailClient:
         message["subject"] = subject
         raw = base64.urlsafe_b64encode(message.as_bytes()).decode()
         return self.service.users().drafts().create(userId="me", body={"message": {"raw": raw}}).execute()
+
+    def find_reply(self, jira_ticket: str, since_date: str) -> str | None:
+        """Search the inbox for a reply mentioning this ticket, received on
+        or after since_date (YYYY-MM-DD), from someone other than the
+        account owner. Returns the first match's plain-text body, or None if
+        nothing's arrived yet.
+
+        The ticket ID is quoted in the query -- Gmail's search parser treats
+        a bare hyphen as a NOT operator, which would silently break a search
+        for e.g. "CRH-2" (interpreted as "CRH" and not "2") if left unquoted.
+        """
+        since_gmail_fmt = since_date.replace("-", "/")
+        query = f'subject:"{jira_ticket}" after:{since_gmail_fmt} -from:me'
+        resp = self.service.users().messages().list(userId="me", q=query, maxResults=1).execute()
+        messages = resp.get("messages", [])
+        if not messages:
+            return None
+        full_message = self.service.users().messages().get(userId="me", id=messages[0]["id"], format="full").execute()
+        return _extract_plain_text(full_message["payload"]) or None
+
+
+def _extract_plain_text(payload: dict) -> str:
+    """Walk a Gmail message payload (which may be multipart) for the
+    text/plain body, base64url-decoded."""
+    if payload.get("mimeType") == "text/plain" and payload.get("body", {}).get("data"):
+        return base64.urlsafe_b64decode(payload["body"]["data"]).decode("utf-8", errors="replace")
+    for part in payload.get("parts", []):
+        text = _extract_plain_text(part)
+        if text:
+            return text
+    return ""
 
 
 def get_gmail_client():

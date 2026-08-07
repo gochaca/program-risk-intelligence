@@ -1,6 +1,6 @@
 # Program Risk & Vendor Coordination Intelligence
 
-**Status:** Milestone 6 — Live vendor coordination 🚧 (Jira connected and validated against a real test project; Gmail still mock-only)
+**Status:** Milestone 6 — Live vendor coordination 🚧 (Jira and Gmail both connected and validated against real accounts)
 
 An AI tool that ingests status updates from multiple teams and vendors, classifies risk with a stated reason, flags patterns across teams that a single update wouldn't reveal, and auto-drafts the kind of status report I used to write by hand every Friday. [Program Risk and Vendor Coordination Intelligence Weekly Status](https://claude.ai/code/artifact/4ce4c387-19b0-4474-aa89-f1066131bba4)
 
@@ -215,7 +215,20 @@ First simulated run: 0 tickets on track, 6 at_risk, 4 blocked (this roster is a 
 
 `JIRA_TEAM_SOURCE=label` reads the first label on a ticket as its "team" — set `JIRA_TEAM_SOURCE=component` instead if your project uses components for that.
 
-**Gmail — not connected yet.** Create a Google Cloud OAuth client (Desktop app type), save it as `credentials.json` in this directory (git-ignored), then run `python3 gmail_client.py` once to complete the one-time browser consent flow. Requires `pip3 install google-api-python-client google-auth-httplib2 google-auth-oauthlib` (kept out of `requirements.txt` since mock/simulate mode doesn't need them).
+**Gmail — connected and validated.** Create a Google Cloud OAuth client (Desktop app type), save it as `credentials.json` in this directory (git-ignored), add yourself as a **Test user** on the OAuth consent screen (unverified apps only work for accounts explicitly listed there — the first attempt here failed with `Error 403: access_denied` until that was done), then run `python3 gmail_client.py` once to complete the one-time browser consent flow. Requires `pip3 install google-api-python-client google-auth-httplib2 google-auth-oauthlib` (kept out of `requirements.txt` since mock/simulate mode doesn't need them).
+
+Tested end-to-end against a real Gmail account: `create_draft()` confirmed (10 real drafts created from the live Jira roster, verified via the API to have the correct subject/recipient/body and to be sitting unsent), and the `gmail.readonly` scope confirmed working for `find_reply()`'s search. Full reply-matching (an actual "someone replied" case) isn't validated yet — `find_reply()` deliberately excludes the account's own sent mail (`-from:me`), so a real test needs a second address to reply from, which is a planned next step, not a gap in the code.
+
+### Real reply-detection
+
+`send_followups()` and the `report` phase's `collect_responses()` used to have a hard live-mode limitation: they couldn't tell who had actually replied, so `followup` would have emailed everyone regardless, and `report` would have treated every ticket as a non-response. That's fixed now:
+
+- `send_first_requests()` records when it ran, in `data/cycle_state.json` (`sent_at`).
+- `RealGmailClient.find_reply(jira_ticket, since_date)` searches the inbox (`gmail.readonly` scope, added alongside the existing `gmail.compose` scope) for a message whose subject contains the ticket ID, received since that date, not from the account owner — and returns its plain-text body if found. The ticket ID is quoted in the search query, since Gmail's query parser treats a bare hyphen as a NOT operator (`CRH-2` unquoted would search for "CRH" and NOT "2").
+- In live mode, `send_followups()` checks `find_reply()` for every ticket still awaiting a response and drops anyone who's already replied instead of following up regardless; `collect_responses()` checks it for every roster ticket to build the actual update record, falling back to the same "no response" record as before only when nothing's found.
+- `MockGmailClient` gained a matching `find_reply()` for interface consistency (backed by an optional `simulated_replies` dict passed at construction), but `simulate` mode keeps using its own existing mock-inbox logic rather than this — that logic is already tested and phase-aware (first-request vs. follow-up timing), and there was no reason to touch a working path.
+
+Unit-tested (the mock path and the MIME-body-extraction helper) and the search mechanism itself is confirmed working against a real inbox (auth, scope, query execution). What's not yet validated is a real *match* — an actual "someone replied" case — since that needs a second real address to send from (see above); `send_followups()`/`collect_responses()` calling into a live inbox with zero matches so far is expected, not a failure.
 
 ### A real incident, and the fix
 
@@ -225,8 +238,7 @@ Caught by inspecting the actual comments before assuming success, and fixed prop
 
 ### Known limitations, stated honestly
 
-- **No automated "did they reply yet" check in live mode.** `send_followups()` currently determines non-responders correctly in simulate mode (from the mock inbox), but in live mode there's no code yet that reads the Gmail inbox to check who's actually replied since Wednesday — it would currently follow up with everyone. Reading real replies (via the Gmail API's `messages.list`/`threads.get`) is the next piece to build before this can run live.
-- **Gmail side is still mock-only.** Real Jira read/write is validated; real Gmail draft creation (OAuth flow, `RealGmailClient`) is written but has not been exercised against a live account yet.
+- **No real "someone replied" case validated yet.** Draft creation and inbox search both work against the real account, but an actual reply match needs a second test address (see "Connecting real accounts" above) — planned next, not built yet.
 - **No scheduling wired up yet.** The three phases (`first-request`, `followup`, `report`) are built to run as separate scheduled invocations (cron, launchd, etc.) but nothing currently triggers them automatically.
 
 ## Repo structure
@@ -277,6 +289,6 @@ _Recording pending — script at [`DEMO_SCRIPT.md`](./DEMO_SCRIPT.md). Link goes
 - [ ] Milestone 5b — Record and link demo
 - [x] Milestone 6a — Live vendor coordination design: Jira + Gmail clients, email templates/parsing, Wed/Fri orchestrator — tested end-to-end against mock fixtures
 - [x] Milestone 6b — Connect real Jira test project (`CRH`) — validated `get_roster()`/`post_comment()` against 10 real tickets; fixed a deprecated-endpoint bug and a simulate-mode safety bug found in the process
-- [ ] Milestone 6c — Connect real Gmail account
-- [ ] Milestone 6d — Read real Gmail replies to detect non-responders (currently only works in simulate mode)
+- [x] Milestone 6c — Connect real Gmail account — OAuth flow completed (needed adding the account as a Test user first, or Google returns `Error 403: access_denied`); `create_draft()` and inbox search both validated with 10 real drafts
+- [x] Milestone 6d — Build real reply-detection (`RealGmailClient.find_reply()`, wired into `send_followups()`/`collect_responses()`) — mechanism validated live; an actual reply match still needs a second test address (planned)
 - [ ] Milestone 6e — Wire up scheduling (cron/launchd) for the three phases
