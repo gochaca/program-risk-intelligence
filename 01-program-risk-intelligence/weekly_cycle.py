@@ -132,9 +132,13 @@ def collect_responses(
     In live mode (mock_inbox=None), looks up each ticket's reply via
     gmail_client.find_reply(), searching since_date onward (defaults to
     when the first request was sent, per cycle_state.json).
+
+    Skips any roster item with no contact_email, matching
+    send_first_requests()'s skip -- a ticket we never actually asked for a
+    status update on shouldn't get "no response" classified against it.
     """
     client = client or Anthropic()
-    roster = jira_client.get_roster()
+    roster = [item for item in jira_client.get_roster() if item.get("contact_email")]
     today = report_date or date.today().isoformat()
     since = since_date or _load_state().get("sent_at") or today
     updates = []

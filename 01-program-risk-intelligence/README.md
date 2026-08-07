@@ -1,6 +1,6 @@
 # Program Risk & Vendor Coordination Intelligence
 
-**Status:** Milestone 6 — Live vendor coordination 🚧 (Jira and Gmail both connected and validated against real accounts)
+**Status:** Milestone 6 — Live vendor coordination 🚧 (full loop validated end-to-end against real Jira + Gmail; scheduling not wired up yet)
 
 An AI tool that ingests status updates from multiple teams and vendors, classifies risk with a stated reason, flags patterns across teams that a single update wouldn't reveal, and auto-drafts the kind of status report I used to write by hand every Friday. [Program Risk and Vendor Coordination Intelligence Weekly Status](https://claude.ai/code/artifact/4ce4c387-19b0-4474-aa89-f1066131bba4)
 
@@ -217,7 +217,7 @@ First simulated run: 0 tickets on track, 6 at_risk, 4 blocked (this roster is a 
 
 **Gmail — connected and validated.** Create a Google Cloud OAuth client (Desktop app type), save it as `credentials.json` in this directory (git-ignored), add yourself as a **Test user** on the OAuth consent screen (unverified apps only work for accounts explicitly listed there — the first attempt here failed with `Error 403: access_denied` until that was done), then run `python3 gmail_client.py` once to complete the one-time browser consent flow. Requires `pip3 install google-api-python-client google-auth-httplib2 google-auth-oauthlib` (kept out of `requirements.txt` since mock/simulate mode doesn't need them).
 
-Tested end-to-end against a real Gmail account: `create_draft()` confirmed (10 real drafts created from the live Jira roster, verified via the API to have the correct subject/recipient/body and to be sitting unsent), and the `gmail.readonly` scope confirmed working for `find_reply()`'s search. Full reply-matching (an actual "someone replied" case) isn't validated yet — `find_reply()` deliberately excludes the account's own sent mail (`-from:me`), so a real test needs a second address to reply from, which is a planned next step, not a gap in the code.
+Tested end-to-end against a real Gmail account: `create_draft()` confirmed (10 real drafts created from the live Jira roster, verified via the API to have the correct subject/recipient/body and to be sitting unsent), and `find_reply()` confirmed against a real reply from a second test address (`ai.chaca69420@gmail.com`) — see "Full live loop, validated" below.
 
 ### Real reply-detection
 
@@ -228,17 +228,31 @@ Tested end-to-end against a real Gmail account: `create_draft()` confirmed (10 r
 - In live mode, `send_followups()` checks `find_reply()` for every ticket still awaiting a response and drops anyone who's already replied instead of following up regardless; `collect_responses()` checks it for every roster ticket to build the actual update record, falling back to the same "no response" record as before only when nothing's found.
 - `MockGmailClient` gained a matching `find_reply()` for interface consistency (backed by an optional `simulated_replies` dict passed at construction), but `simulate` mode keeps using its own existing mock-inbox logic rather than this — that logic is already tested and phase-aware (first-request vs. follow-up timing), and there was no reason to touch a working path.
 
-Unit-tested (the mock path and the MIME-body-extraction helper) and the search mechanism itself is confirmed working against a real inbox (auth, scope, query execution). What's not yet validated is a real *match* — an actual "someone replied" case — since that needs a second real address to send from (see above); `send_followups()`/`collect_responses()` calling into a live inbox with zero matches so far is expected, not a failure.
+Unit-tested (the mock path and the MIME-body-extraction helper), and now validated against a real match too (see below) — not just the search mechanism in isolation.
 
-### A real incident, and the fix
+### Full live loop, validated
 
-While testing the real Jira connection, `python3 weekly_cycle.py simulate` was run to regenerate the mock demo artifacts — but at the time, `simulate` used `get_jira_client()`, which auto-selects Real vs. Mock based on whatever's configured in the environment. Since real Jira credentials were now set, `simulate` silently ran against the **real** `CRH` project instead of the mock fixtures, and posted 11 nonsense "no response" comments (built from the old 2025 mock inbox, which has nothing matching real `CRH-xxx` keys) onto real tickets.
+With a second test address (`ai.chaca69420@gmail.com`) sending a real reply to one ticket (`CRH-2`, subject line including `(CRH-2)` per the search format `find_reply()` expects), the entire loop ran for real:
 
-Caught by inspecting the actual comments before assuming success, and fixed properly rather than papered over: `simulate` now always instantiates `MockJiraClient()`/`MockGmailClient()` directly, regardless of what's configured — a mode whose entire purpose is a safe local test must not be able to touch a real account just because credentials happen to be present. The 11 bad comments were deleted via the API afterward. Documenting this here rather than quietly cleaning it up, since "the mock/live switch was a shared code path with a footgun in it" is exactly the kind of thing worth being honest about in a project whose whole pitch is catching risk before it becomes a blocker.
+1. `find_reply('CRH-2', ...)` found the message and returned its plain-text body.
+2. `email_parser.parse_reply_to_update()` turned "*Copy has been implemented across all pages. No blockers on our end, should be done by Wednesday.*" into a structured update — correctly inferred `self_reported_risk: Low` from "no blockers" even though the reply never stated a risk level explicitly.
+3. `python3 weekly_cycle.py report` ran the full pipeline against live Jira + live Gmail: `CRH-2` classified `on_track`; the other 9 tickets (genuinely silent, since nobody else was going to reply to a solo test project) classified based on actual "no response" records; cross-source pattern detection correctly recognized 8 unrelated tickets all showing the identical "two unanswered requests" symptom as one systemic pattern worth investigating, rather than listing them as 8 coincidental problems; both report altitudes generated; classifications posted back to the real tickets as comments.
+
+One real bug turned up in this run: `collect_responses()` didn't apply the same "skip tickets with no assignee" rule that `send_first_requests()` uses, so `CRH-1` (the one pre-existing, unassigned ticket) got classified `blocked` and commented on even though it was never actually asked for an update. Fixed by applying the same `contact_email` filter in `collect_responses()` — a ticket the tool never asked shouldn't get judged for not answering. The erroneous comment was deleted from the real ticket afterward.
+
+### Two real incidents today, and the fixes
+
+**Incident 1 — `simulate` touched a real account.** While testing the real Jira connection, `python3 weekly_cycle.py simulate` was run to regenerate the mock demo artifacts — but at the time, `simulate` used `get_jira_client()`, which auto-selects Real vs. Mock based on whatever's configured in the environment. Since real Jira credentials were now set, `simulate` silently ran against the **real** `CRH` project instead of the mock fixtures, and posted 11 nonsense "no response" comments (built from the old 2025 mock inbox, which has nothing matching real `CRH-xxx` keys) onto real tickets.
+
+Caught by inspecting the actual comments before assuming success, and fixed properly rather than papered over: `simulate` now always instantiates `MockJiraClient()`/`MockGmailClient()` directly, regardless of what's configured — a mode whose entire purpose is a safe local test must not be able to touch a real account just because credentials happen to be present. The 11 bad comments were deleted via the API afterward.
+
+**Incident 2 — a real `credentials.json` got committed to the repo root.** Found via GitHub's own secret-scanning warning. The file wasn't added through any local git operation on this project — the path (`credentials.json` at the repo root, not `01-program-risk-intelligence/credentials.json`) and the commit pattern (`Create`, then two `Update`s) point to it being added directly through GitHub's website. That matters because **`.gitignore` has zero effect on files created that way** — it only stops local git tooling from picking up new files, and it stops protecting a file entirely once that file is ever tracked. The exposed OAuth client was revoked and replaced immediately; the file was removed from the current tree (`git rm`) once the rotation was confirmed. The dead credential still exists in the old commit history — harmless now that it's revoked, but history hasn't been rewritten to remove it, since that needs a force-push and wasn't asked for.
+
+Documenting both here rather than quietly fixing them, since "here's what broke and how it got caught and fixed" is exactly the kind of thing worth being honest about in a project whose whole pitch is catching risk before it becomes a blocker.
 
 ### Known limitations, stated honestly
 
-- **No real "someone replied" case validated yet.** Draft creation and inbox search both work against the real account, but an actual reply match needs a second test address (see "Connecting real accounts" above) — planned next, not built yet.
+- **Only one real responder tested.** The full loop is validated with one real reply (`CRH-2`); multi-team dynamics (several different real people replying with genuinely different content) haven't been tested since this is still a solo test project.
 - **No scheduling wired up yet.** The three phases (`first-request`, `followup`, `report`) are built to run as separate scheduled invocations (cron, launchd, etc.) but nothing currently triggers them automatically.
 
 ## Repo structure
@@ -290,5 +304,5 @@ _Recording pending — script at [`DEMO_SCRIPT.md`](./DEMO_SCRIPT.md). Link goes
 - [x] Milestone 6a — Live vendor coordination design: Jira + Gmail clients, email templates/parsing, Wed/Fri orchestrator — tested end-to-end against mock fixtures
 - [x] Milestone 6b — Connect real Jira test project (`CRH`) — validated `get_roster()`/`post_comment()` against 10 real tickets; fixed a deprecated-endpoint bug and a simulate-mode safety bug found in the process
 - [x] Milestone 6c — Connect real Gmail account — OAuth flow completed (needed adding the account as a Test user first, or Google returns `Error 403: access_denied`); `create_draft()` and inbox search both validated with 10 real drafts
-- [x] Milestone 6d — Build real reply-detection (`RealGmailClient.find_reply()`, wired into `send_followups()`/`collect_responses()`) — mechanism validated live; an actual reply match still needs a second test address (planned)
+- [x] Milestone 6d — Build and validate real reply-detection end to end — a second test address (`ai.chaca69420@gmail.com`) replied for real, `find_reply()` found it, the parser extracted a structured update from it, and `python3 weekly_cycle.py report` classified it correctly (`on_track`) alongside 9 genuine non-responses, with cross-source patterns and both report altitudes generated from real data and posted back to real Jira tickets
 - [ ] Milestone 6e — Wire up scheduling (cron/launchd) for the three phases

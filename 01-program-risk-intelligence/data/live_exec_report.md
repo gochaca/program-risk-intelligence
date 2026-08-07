@@ -1,36 +1,25 @@
-# Executive Program Status — Week of 10/31
+# Executive Program Status — Week of Aug 7, 2026
 
-## Health Snapshot
-**0 on track / 5 at risk / 5 blocked** (10 total tickets)
+## 1. Health Snapshot
+**On track: 1 | At risk: 3 | Blocked: 6 | Total: 10**
 
-No ticket in the portfolio is currently on track. Details below.
+## 2. Cross-Source Patterns (Portfolio-Level)
 
----
+**🔴 Systemic communication breakdown (8 tickets: CRH-3, 4, 5, 7, 8, 9, 10, 11)**
+Eight unrelated teams — spanning IAM, CDP, QA, marketing, cloud infra, legal, dealer systems, and mobile — all show the exact same symptom this week: two unanswered outreach attempts (initial + follow-up). This uniformity across unrelated teams is very unlikely to be eight coincidental people problems.
+**Action needed:** Investigate a common root cause (shared ticketing/notification tool outage, or a company-wide event this week absorbing bandwidth) before treating these as individual team failures. This should be looked into before next week's report.
 
-## Cross-Source Patterns Requiring Attention
+**🟠 CCPA initiative masked risk (CRH-3, CRH-4, plus on-track CRH-2)**
+The Web Platform stream of the CCPA Regulatory Website Updates initiative is on track and unblocked, but the Dealer Systems (CRH-4) and Mobile (CRH-3) streams of the *same* initiative have gone silent. The on-track status of one stream is masking that the initiative overall is at risk for the Aug 14 deadline.
+**Action needed:** Escalate directly to Dealer Systems and Mobile leadership now — don't let Web Platform's status create false confidence.
 
-**1. Systemic: Emergency work is displacing planned commitments portfolio-wide**
-Four separate teams/vendors (Legal Ops, Regional Marketing, BrightPath, IAM) all report the same issue this week: unplanned priorities (a DSAR audit, a CMO-driven campaign, a firmware escalation, a partner incident) are bumping deadline-bound work, and each team is absorbing it silently.
-→ **Action:** Raise at the portfolio level — establish protected capacity or an explicit escalation/triage path for unplanned work vs. committed deadlines. This is a process gap, not four separate problems.
+**🟠 Cloud migration dependency (CRH-7, CRH-6)**
+Security Review (CRH-7, blocked) and Cutover (CRH-6, at risk) are sequential phases of the same Data Center Cloud Migration, owned by the same team (acme-cloud-infrastructure), and both are stalled for the same reason. Cutover likely can't proceed until Security Review's blocker clears.
+**Action needed:** Resolve the unresponsive party on CRH-7 first — this may unblock both tickets at once.
 
-**2. CCPA website updates (3 teams, same root cause)**
-Web Platform, Mobile, and Dealer Systems are all racing the same 10/31 deadline with zero buffer, all traceable to Legal's CCPA copy finalization/distribution timing.
-→ **Action:** Confirm whether 10/31 is truly immovable regulatory-wise. If so, negotiate one coordinated extension/phased compliance rather than three teams scrambling independently.
+**🟠 Team overload risk (acme-cloud-infrastructure)**
+This same team is running two dependent, deadline-sensitive migration phases in parallel (Aug 14 and Aug 21), both stalled simultaneously — suggesting capacity strain rather than coincidence.
+**Action needed:** Check whether this team needs additional resourcing or a re-sequenced timeline before the Aug 21 Cutover date is at risk of slipping too.
 
-**3. BrightPath capacity conflict (Dealer Systems ↔ BrightPath)**
-Dealer Systems is blocked waiting on BrightPath's release calendar; BrightPath has confirmed it's fully consumed by an escalated Honda firmware defect with no ETA.
-→ **Action:** Escalate directly to BrightPath leadership this week — waiting for a reply won't resolve it; this needs a priority conversation, not a follow-up email.
-
-**4. Legal Ops delay is causing a downstream miss (Consent Taxonomy → CDP)**
-Legal Ops' taxonomy review slipped due to competing priorities, which is the direct cause of CDP's Consent Signal Integration already missing its 10/25 date.
-→ **Action:** Direct Legal Ops to prioritize the taxonomy review above the DSAR audit, or explicitly tell CDP to expect a further delay.
-
-**5. Acme vendor capacity/responsiveness (Cloud Migration cutover + security review)**
-Same vendor is showing rehearsal slippage (staffing shortage) and unresponsiveness on a due-today security review, both tied to the 11/7 cutover.
-→ **Action:** One consolidated escalation call with Acme this week covering both issues — cutover is days away.
-
----
-
-## Remaining At-Risk/Blocked Items (not covered above)
-
-All at-risk/blocked tickets are captured by the patterns above — no additional items require separate coverage this week.
+## 3. Remaining At-Risk / Blocked Tickets
+All 9 at-risk/blocked tickets are addressed by the patterns above — no additional standalone issues to flag this week.

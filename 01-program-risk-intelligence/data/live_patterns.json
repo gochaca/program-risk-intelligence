@@ -1,60 +1,47 @@
 {
   "patterns": [
     {
-      "pattern_type": "shared_dependency",
+      "pattern_type": "systemic_theme",
       "tickets_involved": [
-        "HND-146c",
-        "HND-520"
+        "CRH-11",
+        "CRH-10",
+        "CRH-9",
+        "CRH-8",
+        "CRH-7",
+        "CRH-5",
+        "CRH-4",
+        "CRH-3"
       ],
-      "description": "Dealer Systems Integration (HND-146c) is blocked waiting on BrightPath to confirm the release calendar for CCPA copy push, and BrightPath itself (HND-520) confirms they are fully consumed by an escalated Honda firmware defect with no ETA to return to 'the dealer portal release calendar' work. This is the same root cause and likely the same underlying request.",
-      "why_it_matters": "The program lead should stop treating HND-146c as a simple follow-up-and-wait issue and instead escalate directly to BrightPath leadership about resourcing, since BrightPath has explicitly deprioritized this work indefinitely. Waiting for a reply will not resolve it -- a priority conversation with BrightPath's management is needed this week."
+      "description": "Eight separate tickets across completely different teams (IAM, CDP, QA services, regional marketing, cloud infrastructure, legal ops, dealer systems, mobile engineering) all report the identical symptom this week: two unanswered requests (initial + follow-up) with no response from the counterpart team. This is far too uniform and widespread to be eight independent communication failures.",
+      "why_it_matters": "This pattern suggests either a program-wide communication/tracking breakdown (e.g., a broken escalation channel, a shared ticketing/notification tool outage, or a company-wide event like an offsite/holiday absorbing bandwidth) rather than eight unrelated unresponsive teams. The program lead should investigate the common cause (e.g., check if these all route through the same request system or if there was a company-wide disruption this week) before treating each as a separate people-management issue."
     },
     {
       "pattern_type": "dependency_chain",
       "tickets_involved": [
-        "HND-89",
-        "HND-88"
+        "CRH-4",
+        "CRH-3",
+        "CRH-2"
       ],
-      "description": "CDP Team (HND-88) is blocked waiting on Legal to confirm the consent taxonomy for consent signal integration. Data Privacy & Legal Ops (HND-89) reveals that their own consent taxonomy review -- the exact input CDP is waiting on -- has slipped to next week because their team was pulled onto CCPA copy work and an unplanned DSAR audit.\n    Together these show HND-88's blocker is fully explained by HND-89's slip, which was not visible from either ticket alone.",
-      "why_it_matters": "The program lead should flag to Legal Ops that their taxonomy slip is now directly causing a second missed deadline downstream (CDP's consent signal integration, already past due 10/25). This should be prioritized above the DSAR audit and CCPA copy work, or CDP needs to be told explicitly to expect another week+ delay."
+      "description": "CRH-4 (Dealer Systems) and CRH-3 (Mobile) are both part of the same CCPA Regulatory Website Updates initiative as CRH-2 (Web Platform), which is on track and reports 'no blockers on their end.' Yet the Dealer Systems and Mobile workstreams for the same initiative have gone silent/unresponsive to two requests this week.",
+      "why_it_matters": "Since Web Platform is ahead of schedule and unblocked, the silence from Dealer Systems and Mobile teams is likely the actual critical path risk for the overall CCPA Regulatory Website Updates initiative completing by Aug 14. The program lead should escalate directly to Dealer Systems and Mobile leadership now, since Web Platform's on-track status could mask the fact that the initiative as a whole is at risk."
     },
     {
       "pattern_type": "shared_dependency",
       "tickets_involved": [
-        "HND-146",
-        "HND-146b",
-        "HND-146c"
+        "CRH-7",
+        "CRH-6"
       ],
-      "description": "All three CCPA website update tickets (Web Platform, Mobile, Dealer Systems) trace their tight or missed timelines back to the same root cause: Legal's CCPA copy finalization and distribution timing. Web Platform and Mobile both only received copy recently (with Mobile further constrained by a release train lock through 10/25), and Dealer Systems is stalled on a separate but related dependency (BrightPath) for the same content push. All three hit the same 10/31 deadline with zero buffer.",
-      "why_it_matters": "This is a single program-level failure, not three independent risks. The lead should treat this as one escalation: confirm whether the 10/31 deadline is truly immovable for regulatory reasons, and if so, negotiate a coordinated extension or phased compliance across all three surfaces rather than three teams independently scrambling to hit an already-missed buffer."
+      "description": "Both tickets belong to acme-cloud-infrastructure and the same Data Center Cloud Migration initiative (Security Review and Cutover phases). Both report the same root issue: two unanswered requests this week, with Security Review classified as blocked and Cutover classified as at_risk/quiet.",
+      "why_it_matters": "Cutover work is dependent on Security Review sign-off; if the same unresponsive counterpart is blocking both, resolving the single upstream dependency (likely a security/compliance reviewer) will unblock two tickets at once. The program lead should identify the specific non-responsive party for CRH-7 first, since it likely explains the quiet status on CRH-6 as well."
     },
     {
       "pattern_type": "team_overload",
       "tickets_involved": [
-        "HND-89"
+        "CRH-7",
+        "CRH-6"
       ],
-      "description": "Data Privacy & Legal Ops is simultaneously handling CCPA copy work, an unplanned DSAR audit from Compliance, and the consent taxonomy review -- three concurrent obligations causing the taxonomy review (with a same-day due date) to slip, self-reported as only 'Low' risk.",
-      "why_it_matters": "Flagged as a single-ticket overload signal that becomes more serious in light of the downstream chain to HND-88 (see dependency_chain pattern) -- the program lead should treat the self-reported 'Low' risk as understated and check whether this team needs additional support or reprioritization this week."
-    },
-    {
-      "pattern_type": "systemic_theme",
-      "tickets_involved": [
-        "HND-89",
-        "HND-95",
-        "HND-520",
-        "HND-611"
-      ],
-      "description": "Four unrelated teams/vendors (Legal Ops, Regional Marketing, BrightPath, and IAM) all report the same 'competing_objectives' signal this week: unplanned emergencies or leadership-driven priority shifts (DSAR audit, CMO competitor campaign, Honda firmware escalation, partner production incident) are displacing planned, deadline-bound work.",
-      "why_it_matters": "This is not four isolated incidents but a program-wide pattern of emergency work displacing planned commitments across both internal teams and vendors. The program lead should raise this at the portfolio level -- teams need protected capacity or an explicit escalation path for triaging unplanned work against committed deadlines, rather than each team absorbing the hit silently."
-    },
-    {
-      "pattern_type": "shared_dependency",
-      "tickets_involved": [
-        "HND-310",
-        "HND-311"
-      ],
-      "description": "Both Acme Cloud Infrastructure tickets show the same vendor struggling to deliver on the Data Center Cloud Migration: HND-310 has a rehearsal slipping twice in three weeks due to staffing shortages, and HND-311 shows the vendor going fully unresponsive to two outreach attempts on a due-today security review.",
-      "why_it_matters": "The lead should treat this as one vendor capacity/responsiveness problem rather than two separate schedule risks -- a single escalation call with Acme covering both the cutover staffing gap and the unresponsive security review contact is warranted this week, given the 11/7 cutover is only days away."
+      "description": "acme-cloud-infrastructure owns two tickets due within two weeks of each other (Aug 14 and Aug 21) for sequential phases of the same migration (Security Review then Cutover), and both are simultaneously stalled due to lack of response this week.",
+      "why_it_matters": "Running two dependent, deadline-sensitive phases of the same migration in parallel with the team already unresponsive on both suggests capacity strain, not coincidence. The program lead should check whether this team is overcommitted and needs additional resourcing or a re-sequenced timeline before Cutover's Aug 21 date slips too."
     }
   ]
 }

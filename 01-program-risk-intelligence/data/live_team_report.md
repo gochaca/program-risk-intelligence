@@ -1,93 +1,85 @@
 # Weekly Program Status Report — Team-Level Detail
 
 ## 1. Health Snapshot
-**On Track: 0 | At Risk: 5 | Blocked: 5 | Total: 10**
 
-Zero tickets are on track this week. Half the program is blocked outright.
-
----
+**On track: 1 | At risk: 3 | Blocked: 6 | Total: 10**
 
 ## 2. Cross-Source Patterns (Act on These First)
 
-### 🔴 Pattern 1: BrightPath has silently deprioritized dealer work — waiting won't fix it
-**Tickets:** HND-146c, HND-520
-Dealer Systems (HND-146c) is stuck waiting on BrightPath to confirm a release calendar. BrightPath's own report (HND-520) confirms why: they're fully consumed by an escalated Honda firmware defect with **no ETA** to return to this exact work.
-**Action:** Stop following up via email. Escalate directly to BrightPath leadership on resourcing this week — a reply will not come on its own.
+### 🔴 Pattern A: Program-wide non-response wave — 8 tickets, likely a common root cause
+**Tickets:** CRH-11, CRH-10, CRH-9, CRH-8, CRH-7, CRH-5, CRH-4, CRH-3
+Eight unrelated teams (IAM, CDP, QA services, regional marketing, cloud infra, legal ops, dealer systems, mobile engineering) all report the exact same symptom this week — two unanswered requests (initial + follow-up), no response. This is too uniform to be eight independent people problems.
+**Action:** Before escalating each ticket individually, check for a common-cause disruption this week (broken escalation/notification channel, tool outage, company-wide event/offsite). Fix the root cause once instead of chasing 8 teams separately.
 
-### 🔴 Pattern 2: Legal Ops' slip is the direct cause of CDP's missed deadline
-**Tickets:** HND-89, HND-88
-CDP (HND-88, due 10/25, now overdue) is blocked waiting on Legal to confirm consent taxonomy. Legal Ops (HND-89) reveals their taxonomy review — the exact input CDP needs — has slipped to next week because they were pulled onto CCPA copy work and an unplanned DSAR audit.
-**Action:** Tell Legal Ops to prioritize the taxonomy review above the DSAR audit, or explicitly notify CDP to expect another week+ delay instead of continued silent waiting.
+### 🟠 Pattern B: CCPA initiative — "on track" status is masking real risk
+**Tickets:** CRH-4 (Dealer Systems), CRH-3 (Mobile), CRH-2 (Web Platform)
+Same initiative (CCPA Regulatory Website Updates). Web Platform (CRH-2) is on track and unblocked, but Dealer Systems and Mobile — both required for the same Aug 14 deadline — have gone silent on two requests.
+**Action:** Don't let CRH-2's green status create false comfort on the initiative overall. Escalate directly to Dealer Systems and Mobile leads now; they are the actual critical path.
 
-### 🔴 Pattern 3: All three CCPA website tickets share one root cause — this is one failure, not three
-**Tickets:** HND-146, HND-146b, HND-146c
-Web Platform, Mobile, and Dealer Systems all trace their zero-buffer, deadline-day scrambles back to the same root cause: Legal's CCPA copy timing (plus, for Dealer Systems, the BrightPath dependency above). All three hit 10/31 with no margin.
-**Action:** Treat as a single escalation. Confirm whether 10/31 is truly immovable for regulatory reasons; if so, negotiate a coordinated extension or phased compliance rather than letting three teams scramble independently.
+### 🟠 Pattern C: Data Center Cloud Migration — one upstream blocker likely explains both statuses
+**Tickets:** CRH-7 (Security Review, blocked), CRH-6 (Cutover, at risk)
+Same team (acme-cloud-infrastructure), sequential phases of one migration. Cutover depends on Security Review sign-off, and both are stalled by the same non-response pattern.
+**Action:** Identify and unblock whoever is not responding on CRH-7 first — this likely resolves CRH-6's "quiet" status too, since Cutover can't proceed without it.
 
-### 🟡 Pattern 4: Data Privacy & Legal Ops is overloaded and under-reporting risk
-**Tickets:** HND-89
-Handling CCPA copy work, an unplanned DSAR audit, and the taxonomy review simultaneously — self-rated "Low" risk despite a same-day due date slip that's now cascading downstream (see Pattern 2).
-**Action:** Check whether this team needs additional support or reprioritization now — their "Low" self-rating is not credible given the downstream impact.
-
-### 🟡 Pattern 5: Program-wide pattern of unplanned work displacing committed deadlines
-**Tickets:** HND-89, HND-95, HND-520, HND-611
-Four unrelated teams/vendors — Legal Ops (DSAR audit), Regional Marketing (CMO competitor campaign), BrightPath (Honda firmware escalation), IAM (partner prod incident) — all report the same "competing_objectives" signal this week.
-**Action:** Raise at the portfolio level. Teams need protected capacity or an explicit escalation path for triaging unplanned work against committed deadlines, rather than absorbing hits silently.
-
-### 🟡 Pattern 6: Acme is a single vendor capacity/responsiveness problem, not two separate risks
-**Tickets:** HND-310, HND-311
-Rehearsal has slipped twice in three weeks (staffing shortage), and the security review contact has gone fully unresponsive to two outreach attempts on a due-today item.
-**Action:** One escalation call with Acme covering both the staffing gap and the unresponsive contact — the 11/7 cutover is days away.
+### 🟡 Pattern D: acme-cloud-infrastructure — possible overload, two dependent deadlines in flight
+**Tickets:** CRH-7 (due Aug 14), CRH-6 (due Aug 21)
+Same team running two sequential, dependent phases in parallel, both stalled simultaneously.
+**Action:** Check this team's capacity/resourcing. If Security Review slips, Cutover's Aug 21 date is next to fall — consider re-sequencing or adding resourcing now rather than waiting for the slip.
 
 ---
 
 ## 3. Ticket Detail by Team
 
-### Web Platform Team
-**HND-146** — CCPA Regulatory Website Updates - October | Due 2025-10-31
-- **AI: Blocked / Bottlenecked** — Due date is today; website updates are only "starting this week" on multiple sites needing validation. No buffer, work not begun.
-- **Self-reported: Medium** ⚠️ **Gap:** Self-rating understates severity given a same-day deadline with implementation not yet started.
+### enterprise-iam
+**CRH-11** — Partner Integration Incident Response — Due **2026-08-07 (today)**
+- AI: **Blocked** (unowned_escalation) — Two requests (initial + follow-up) unanswered; due date is today with no progress.
+- Self-reported risk: none provided.
 
-### Mobile App Engineering
-**HND-146b** — CCPA Regulatory Website Updates - October | Due 2025-10-31
-- **AI: At Risk / Bottlenecked** — Release train locked through 10/25 delayed start; targeting completion on the 30th for a 10/31 deadline, leaving zero buffer. Today is the due date and status is still unconfirmed.
-- **Self-reported: High** (matches AI severity, no gap).
+### cdp-team
+**CRH-10** — Consent Signal Integration — Due **2026-08-08**
+- AI: **Blocked** (unowned_escalation) — Two requests unanswered, due tomorrow, no owner engaged.
+- Self-reported risk: none provided.
 
-### Dealer Systems Integration
-**HND-146c** — CCPA Regulatory Website Updates - October | Due 2025-10-31
-- **AI: Blocked / Bottlenecked** — Waiting on BrightPath's release calendar confirmation since a 10/15 follow-up; no response. Due date is today, dependency unresolved.
-- **Self-reported: Medium** ⚠️ **Gap:** Understated — this is blocked, not medium risk (see Pattern 1).
+### brightpath-qa-services
+**CRH-9** — Dealer Portal Release Calendar — Due **2026-08-07 (today)**
+- AI: **Blocked** (unowned_escalation) — Unresponsive to two outreach attempts, due date today, no engagement.
+- Self-reported risk: none provided.
 
-### Data Privacy & Legal Ops
-**HND-89** — Consent Taxonomy Review | Due 2025-10-31
-- **AI: At Risk / Competing Objectives** — Team pulled onto CCPA copy work and an unplanned DSAR audit; review sliding to next week, past today's due date.
-- **Self-reported: Low** ⚠️ **Gap:** Understated — this is a real slip past deadline, and it's directly causing HND-88 to miss its own deadline (see Pattern 2).
+### regional-marketing-na
+**CRH-8** — Competitor-Response Campaign — Due **2026-08-14**
+- AI: **Blocked** (unowned_escalation) — Two unanswered requests, due date one week out, no owner has picked up escalation.
+- Self-reported risk: none provided.
 
-### Acme Cloud Infrastructure (Vendor)
-**HND-310** — Data Center Cloud Migration - Cutover | Due 2025-11-07
-- **AI: At Risk / Bottlenecked** — Rehearsal slipped from 10/29 to 11/3 (second slip in three weeks, staffing shortage), compressing rehearsal-to-cutover window to 4 days with no buffer.
-- **Self-reported: Medium** (roughly consistent, vendor still confident in 11/7 date).
+### acme-cloud-infrastructure
+**CRH-7** — Data Center Cloud Migration - Security Review — Due **2026-08-14**
+- AI: **Blocked** (unowned_escalation) — Two unanswered requests, due date one week away, no response received.
+- Self-reported risk: none provided.
+- *See Pattern C/D — likely upstream cause for CRH-6.*
 
-**HND-311** — Data Center Cloud Migration - Security Review | Due 2025-10-31
-- **AI: Blocked / Unowned Escalation** — No vendor response to two outreach attempts; due date is today with no progress and no escalation in motion.
-- **Self-reported:** None provided — no risk rating submitted at all, which is itself a red flag.
+**CRH-6** — Data Center Cloud Migration - Cutover — Due **2026-08-21**
+- AI: **At Risk** (quiet) — Team silent on two requests; due date two weeks out, credible threat if silence continues.
+- Self-reported risk: none provided.
+- *See Pattern C/D — likely downstream of CRH-7's blocker.*
 
-### Regional Marketing - NA
-**HND-95** — Competitor-Response Campaign (Unplanned) | Due 2025-10-31
-- **AI: At Risk / Competing Objectives** — CMO office fast-tracked a competitor campaign; sequencing against the planned holiday campaign is unresolved as of the due date.
-- **Self-reported: Medium** (consistent, no meaningful gap).
+### data-privacy-legal-ops
+**CRH-5** — Consent Taxonomy Review — Due **2026-08-14**
+- AI: **Blocked** (unowned_escalation) — Two unanswered requests, due date one week away, no decision-maker responding.
+- Self-reported risk: none provided.
 
-### BrightPath QA Services (Vendor)
-**HND-520** — Dealer Portal Release Calendar | Due 2025-10-24 (already past due)
-- **AI: Blocked / Competing Objectives** — Vendor fully consumed by an escalated Honda firmware defect; no ETA to resume this work. Due date already passed.
-- **Self-reported: High** (matches AI severity, no gap — but see Pattern 1 for downstream impact on HND-146c).
+### dealer-systems-integration
+**CRH-4** — CCPA Regulatory Website Updates - Dealer Systems — Due **2026-08-14**
+- AI: **At Risk** (quiet) — No response to two outreach attempts; due date one week away, silence threatens deadline.
+- Self-reported risk: none provided.
+- *See Pattern B — part of CCPA initiative critical path.*
 
-### Customer Data Platform (CDP) Team
-**HND-88** — Consent Signal Integration | Due 2025-10-25 (already past due)
-- **AI: Blocked / Unowned Escalation** — Still waiting on Legal to confirm consent taxonomy; due date passed six days ago with no escalation ownership visible.
-- **Self-reported: Medium** ⚠️ **Gap:** Understated — this is past-due and blocked, not a medium risk still-in-progress item. Root cause traced to HND-89 (see Pattern 2).
+### mobile-app-engineering
+**CRH-3** — CCPA Regulatory Website Updates - Mobile — Due **2026-08-14**
+- AI: **At Risk** (quiet) — No response to either request this week; due date one week away, no visible progress.
+- Self-reported risk: none provided.
+- *See Pattern B — part of CCPA initiative critical path.*
 
-### Enterprise Identity & Access Management
-**HND-611** — Partner Integration Incident Response | Due 2025-10-24 (already past due)
-- **AI: At Risk / Competing Objectives** — Unplanned partner production emergency pulled two engineers off SSO cert renewal; deploy expected on schedule but with zero remaining buffer.
-- **Self-reported: Medium** (roughly consistent with AI assessment, no meaningful gap).
+### web-platform-team
+**CRH-2** — CCPA Regulatory Website Updates - Web Platform — Due **2026-08-14**
+- AI: **On Track** (none) — Copy implemented across all pages, no blockers, expected done by Wednesday.
+- Self-reported risk: **Low** — "No blockers on their end." *(Matches AI classification — no gap.)*
+- *See Pattern B — this team's green status should not be read as the initiative being on track overall.*
