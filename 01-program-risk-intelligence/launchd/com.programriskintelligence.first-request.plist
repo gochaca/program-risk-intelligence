@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.programriskintelligence.first-request</string>
+
+    <key>ProgramArguments</key>
+    <array>
+        <string>/usr/bin/python3</string>
+        <string>/Users/chaca80gmail.com/Projects/program-risk-intelligence/01-program-risk-intelligence/weekly_cycle.py</string>
+        <string>first-request</string>
+    </array>
+
+    <key>WorkingDirectory</key>
+    <string>/Users/chaca80gmail.com/Projects/program-risk-intelligence/01-program-risk-intelligence</string>
+
+    <key>StartCalendarInterval</key>
+    <dict>
+        <key>Weekday</key>
+        <integer>3</integer>
+        <key>Hour</key>
+        <integer>9</integer>
+        <key>Minute</key>
+        <integer>0</integer>
+    </dict>
+
+    <key>StandardOutPath</key>
+    <string>/Users/chaca80gmail.com/Projects/program-risk-intelligence/01-program-risk-intelligence/logs/first-request.log</string>
+    <key>StandardErrorPath</key>
+    <string>/Users/chaca80gmail.com/Projects/program-risk-intelligence/01-program-risk-intelligence/logs/first-request.err.log</string>
+
+    <key>EnvironmentVariables</key>
+    <dict>
+        <key>PATH</key>
+        <string>/usr/local/bin:/usr/bin:/bin</string>
+    </dict>
+
+    <key>RunAtLoad</key>
+    <false/>
+</dict>
+</plist>

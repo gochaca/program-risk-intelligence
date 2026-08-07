@@ -1,6 +1,6 @@
 # Program Risk & Vendor Coordination Intelligence
 
-**Status:** Milestone 6 — Live vendor coordination 🚧 (full loop validated end-to-end against real Jira + Gmail; scheduling not wired up yet)
+**Status:** Milestone 6 — Live vendor coordination ✅ (full loop validated end-to-end against real Jira + Gmail; scheduling built, not yet activated)
 
 An AI tool that ingests status updates from multiple teams and vendors, classifies risk with a stated reason, flags patterns across teams that a single update wouldn't reveal, and auto-drafts the kind of status report I used to write by hand every Friday. [Program Risk and Vendor Coordination Intelligence Weekly Status](https://claude.ai/code/artifact/4ce4c387-19b0-4474-aa89-f1066131bba4)
 
@@ -250,10 +250,26 @@ Caught by inspecting the actual comments before assuming success, and fixed prop
 
 Documenting both here rather than quietly fixing them, since "here's what broke and how it got caught and fixed" is exactly the kind of thing worth being honest about in a project whose whole pitch is catching risk before it becomes a blocker.
 
+### Scheduling
+
+[`launchd/`](./launchd/) has three macOS launchd agent definitions, one per phase, following the cadence set earlier: first-request Wednesday 9am, followup Friday 8am, report Friday 3pm (leaving hours for Friday-morning follow-up replies to land before the report generates). launchd rather than cron, since it's the native, more reliable scheduler on macOS.
+
+"Followup at 8am" doesn't mean everyone gets emailed again at 8am — the phase runs then, but `find_reply()` (see above) checks who's actually replied first and only drafts a follow-up for the ones who haven't. Someone who replied Wednesday afternoon never gets a redundant nudge.
+
+Each plist runs `python3 weekly_cycle.py <phase>` with an absolute path and explicit `WorkingDirectory`, so it works the same whether triggered by a human or by launchd. Output goes to `logs/<phase>.log` / `logs/<phase>.err.log` (git-ignored).
+
+```bash
+cd 01-program-risk-intelligence/launchd
+./install_scheduling.sh    # installs and activates all three jobs
+./uninstall_scheduling.sh  # stops and removes them
+```
+
+**Built, not activated.** Once installed, this runs completely unattended — no chat session, no confirmation per run: real emails get drafted, real Jira comments get posted, on a schedule, indefinitely. That's a meaningfully bigger blast radius than anything else in this project so far (everything up to now needed a human to type a command), so it's staying off until deliberately turned on.
+
 ### Known limitations, stated honestly
 
 - **Only one real responder tested.** The full loop is validated with one real reply (`CRH-2`); multi-team dynamics (several different real people replying with genuinely different content) haven't been tested since this is still a solo test project.
-- **No scheduling wired up yet.** The three phases (`first-request`, `followup`, `report`) are built to run as separate scheduled invocations (cron, launchd, etc.) but nothing currently triggers them automatically.
+- **Scheduling is built but not activated** — see above.
 
 ## Repo structure
 
@@ -271,6 +287,8 @@ Documenting both here rather than quietly fixing them, since "here's what broke 
 ├── weekly_cycle.py             # orchestrator: Wed request -> Fri followup -> report (Milestone 6)
 ├── requirements.txt
 ├── .env.example
+├── launchd/                     # scheduling: 3 launchd agents + install/uninstall scripts (Milestone 6)
+├── logs/                        # launchd job output (git-ignored, .gitkeep only)
 └── data/
     ├── mock_status_updates.json
     ├── eval_scenarios.json       # adversarial test set (Milestone 5)
@@ -305,4 +323,4 @@ _Recording pending — script at [`DEMO_SCRIPT.md`](./DEMO_SCRIPT.md). Link goes
 - [x] Milestone 6b — Connect real Jira test project (`CRH`) — validated `get_roster()`/`post_comment()` against 10 real tickets; fixed a deprecated-endpoint bug and a simulate-mode safety bug found in the process
 - [x] Milestone 6c — Connect real Gmail account — OAuth flow completed (needed adding the account as a Test user first, or Google returns `Error 403: access_denied`); `create_draft()` and inbox search both validated with 10 real drafts
 - [x] Milestone 6d — Build and validate real reply-detection end to end — a second test address (`ai.chaca69420@gmail.com`) replied for real, `find_reply()` found it, the parser extracted a structured update from it, and `python3 weekly_cycle.py report` classified it correctly (`on_track`) alongside 9 genuine non-responses, with cross-source patterns and both report altitudes generated from real data and posted back to real Jira tickets
-- [ ] Milestone 6e — Wire up scheduling (cron/launchd) for the three phases
+- [x] Milestone 6e — Build scheduling (`launchd/`, 3 agents: Wed 9am / Fri 8am / Fri 3pm) with install/uninstall scripts — built and validated with `plutil -lint`, deliberately left inactive until explicitly turned on
