@@ -1,8 +1,8 @@
 # Program Risk & Vendor Coordination Intelligence
 
-**Status:** Milestone 6 — Live vendor coordination ✅ (full loop validated end-to-end against real Jira + Gmail; scheduling active through 2026-08-14, then auto-stops)
+**Status:** Milestone 6: Complete: Live vendor coordination (full loop validated end-to-end against real Jira + Gmail)
 
-An AI tool that ingests status updates from multiple teams and vendors, classifies risk with a stated reason, flags patterns across teams that a single update wouldn't reveal, and auto-drafts the kind of status report I used to write by hand every Friday. [Program Risk and Vendor Coordination Intelligence Weekly Status](https://claude.ai/code/artifact/4ce4c387-19b0-4474-aa89-f1066131bba4)
+My custom designed and built tool that sends update requests and ingests updates from multiple teams (internal and external), classifies risk with a stated reason, flags patterns across teams, and auto-drafts an analysis in a weekly status report and executive summary [Program Risk and Vendor Coordination Intelligence Weekly Status](https://claude.ai/code/artifact/4ce4c387-19b0-4474-aa89-f1066131bba4)
 
 ## The problem
 
