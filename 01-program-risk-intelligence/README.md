@@ -6,7 +6,7 @@ My custom designed and built tool that sends update requests and ingests updates
 
 ## The problem
 
-Every Friday, I collect status updates from ~10 teams (a mix of internal teams and external vendors), covering 1-5 active issues each, and turn them into a leadership status report. Each update looks roughly like this:
+Every week, I would have to track down status updates for more than team teams. Internal teams do not respond, external teams are traveling and won't be back until Monday, all while we have a dozen active issues requiring updates. It was frustrating, tedious and most importantly, unreliable. Once the updates were received, I would get the status updates I could, and update Jira: 
 
 | Field | Example |
 |---|---|
