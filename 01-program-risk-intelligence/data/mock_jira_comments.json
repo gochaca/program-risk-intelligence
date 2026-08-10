@@ -1,52 +1,52 @@
 [
   {
     "jira_ticket": "HND-146",
-    "comment": "Program Risk Intelligence -- weekly classification (2025-10-31)\nStatus: BLOCKED (signal: bottlenecked)\nThe due date is today (Oct 31), yet the update states website updates are \"starting this week\" on multiple sites requiring validation. With no time buffer remaining and work only just beginning, the deadline cannot realistically be met, and the self-reported Medium rating understates the severity of a same-day due date with implementation not yet complete.",
-    "posted_at": "2026-08-07T17:02:39.835735+00:00"
+    "comment": "Program Risk Intelligence -- weekly update (2025-10-31)\n\nReply received:\n\"Hi -- update on CCPA: legal finalized copy and sent it over to us, Mobile, and Dealer Systems. We're starting the website updates this week for the Oct 31 date. I'd call this Medium risk mainly because we've got multiple sites to update and validate and only about a week to do it.\"\n\nAI classification: BLOCKED (signal: bottlenecked)\nWebsite updates are only 'starting this week' to meet an Oct 31 deadline, but the report date is Oct 31 itself, meaning the work has not been completed and there's no time left to finish and validate multiple sites. The team also relied on Legal finalizing copy before starting, and now the due date has arrived with implementation still not done.",
+    "posted_at": "2026-08-10T17:19:58.193964+00:00"
   },
   {
     "jira_ticket": "HND-146b",
-    "comment": "Program Risk Intelligence -- weekly classification (2025-10-31)\nStatus: AT_RISK (signal: bottlenecked)\nImplementation was blocked by the locked release train through 10/25, and the team is targeting completion on the 30th for a 10/31 deadline\u2014leaving zero buffer for any slippage, testing issues, or release complications. Notably, today is the report date (10/31), the actual due date, meaning this update should reflect final status but instead still shows a razor-thin, unconfirmed timeline.",
-    "posted_at": "2026-08-07T17:02:39.836108+00:00"
+    "comment": "Program Risk Intelligence -- weekly update (2025-10-31)\n\nReply received:\n\"Got the CCPA copy from Legal on the 22nd. Problem is our release train is locked through 10/25 for the Q4 security patch, so we can't start implementation until right after that -- targeting the 30th, which is basically no buffer before the 31st deadline. I'd flag this High.\"\n\nAI classification: AT_RISK (signal: bottlenecked)\nImplementation was stalled by the release train lock through 10/25, and the team is now targeting a 10/30 start with zero buffer before the 10/31 due date; any slippage in that single-day implementation window (report date is the due date itself) will cause a miss.",
+    "posted_at": "2026-08-10T17:19:58.194335+00:00"
   },
   {
     "jira_ticket": "HND-146c",
-    "comment": "Program Risk Intelligence -- weekly classification (2025-10-31)\nStatus: BLOCKED (signal: bottlenecked)\nProgress has actually stopped\u2014CCPA copy cannot be pushed to dealer-facing sites until BrightPath confirms its release calendar, and there's been no response since the follow-up on the 15th. This is the due date itself (10/31), so the dependency is unresolved with zero runway left, making the self-reported 'Medium' risk understated.",
-    "posted_at": "2026-08-07T17:02:39.836305+00:00"
+    "comment": "Program Risk Intelligence -- weekly update (2025-10-31)\n\nReply received:\n\"Still waiting on BrightPath to confirm their release calendar so we can push the CCPA copy to dealer-facing sites -- we asked on the 15th and haven't heard back. Assuming they get back to us soon we should still make the date, so I'll say Medium for now.\"\n\nAI classification: BLOCKED (signal: bottlenecked)\nDue date is today (10/31) and the team cannot push CCPA copy to dealer-facing sites without BrightPath's release calendar confirmation, which has been outstanding since a request on the 15th with no response -- over two weeks of silence. Progress has effectively stalled on this external dependency with no indication BrightPath is actively engaged, making the hope to 'still make the date' unrealistic given zero forward movement.",
+    "posted_at": "2026-08-10T17:19:58.194693+00:00"
   },
   {
     "jira_ticket": "HND-89",
-    "comment": "Program Risk Intelligence -- weekly classification (2025-10-31)\nStatus: AT_RISK (signal: competing_objectives)\nThe team has been pulled onto unplanned CCPA copy work and a DSAR audit request from Compliance, causing the taxonomy review to slide to next week. Since the due date is today (10/31), this is a real slip past deadline despite the self-reported 'Low' risk, contradicting the rationale that there's still buffer.",
-    "posted_at": "2026-08-07T17:02:39.836505+00:00"
+    "comment": "Program Risk Intelligence -- weekly update (2025-10-31)\n\nReply received:\n\"Consent taxonomy review is in progress, but this week we got pulled onto the CCPA copy work plus an unplanned DSAR audit request from Compliance, so it's sliding to next week. Low risk from our side -- our own due date isn't until the 31st.\"\n\nAI classification: AT_RISK (signal: competing_objectives)\nThe team was pulled onto unplanned CCPA copy work and a DSAR audit request from Compliance, causing the taxonomy review to slide to next week -- but today, October 31, is the actual due date, so the self-reported 'Low' risk rationale (citing buffer that doesn't exist) understates the threat to the deadline.",
+    "posted_at": "2026-08-10T17:19:58.195156+00:00"
   },
   {
     "jira_ticket": "HND-310",
-    "comment": "Program Risk Intelligence -- weekly classification (2025-10-31)\nStatus: AT_RISK (signal: bottlenecked)\nThe cutover rehearsal has now slipped twice in three weeks due to a recurring staffing shortage on the vendor's side, and the rehearsal is now compressed to just 4 days before the 11/7 cutover date, leaving no buffer for issues found in rehearsal. Despite the vendor's confidence, the repeated slips and lack of a concrete staffing fix are a credible threat to the deadline.",
-    "posted_at": "2026-08-07T17:02:39.838056+00:00"
+    "comment": "Program Risk Intelligence -- weekly update (2025-10-31)\n\nReply received:\n\"Apologies for the slow reply -- been heads down. Cutover rehearsal originally set for 10/29 slipped to 11/3, staffing shortage on our end. Second time this has moved in three weeks. Still think we can hit 11/7 for the actual cutover. Call it Medium.\"\n\nAI classification: AT_RISK (signal: bottlenecked)\nThe rehearsal\u2014a critical precursor to the 11/7 cutover\u2014has now slipped twice in three weeks due to staffing shortages, and the rescheduled date (11/3) leaves almost no buffer before the cutover. Given this repeated slippage pattern and vendor staffing issues, the claim that 11/7 is still achievable is optimistic and unsupported by a concrete mitigation plan.",
+    "posted_at": "2026-08-10T17:19:58.195457+00:00"
   },
   {
     "jira_ticket": "HND-311",
-    "comment": "Program Risk Intelligence -- weekly classification (2025-10-31)\nStatus: BLOCKED (signal: unowned_escalation)\nThe vendor has not responded to two outreach attempts (initial request and follow-up), and today is the actual due date with no progress reported. Work cannot move forward without vendor engagement, and no one appears to have escalated this unresponsiveness to force a resolution.",
-    "posted_at": "2026-08-07T17:02:39.838429+00:00"
+    "comment": "Program Risk Intelligence -- weekly update (2025-10-31)\n\nNo reply received to this week's status request(s).\n\nAI classification: BLOCKED (signal: unowned_escalation)\nThe vendor has not responded to two outreach attempts (initial and follow-up), and the due date is today (2025-10-31) with no forward progress possible until they engage. There's no indication anyone internally has escalated this non-responsiveness to force action.",
+    "posted_at": "2026-08-10T17:19:58.195857+00:00"
   },
   {
     "jira_ticket": "HND-95",
-    "comment": "Program Risk Intelligence -- weekly classification (2025-10-31)\nStatus: AT_RISK (signal: competing_objectives)\nThe CMO's office has inserted an unplanned competitor-response campaign that is now competing with the original holiday campaign for resources, and sequencing between the two is not yet locked in. Since the due date is today (2025-10-31) and the plan is still unresolved, this is a real threat to on-time delivery, though the sender believes both are still achievable.",
-    "posted_at": "2026-08-07T17:02:39.838686+00:00"
+    "comment": "Program Risk Intelligence -- weekly update (2025-10-31)\n\nReply received:\n\"New one this week -- CMO's office wants us to fast-track a competitor-response campaign ahead of the holiday campaign we already had planned. Still figuring out sequencing. I think we can deliver both but it's not locked in yet, so Medium risk on the original holiday timeline.\"\n\nAI classification: AT_RISK (signal: competing_objectives)\nThe CMO's office has injected an unplanned competitor-response campaign that must be sequenced against the existing holiday campaign, and on the due date itself the plan is still not locked in. This is a classic competing-objectives situation threatening the timeline, though the sender believes both can still be delivered.",
+    "posted_at": "2026-08-10T17:19:58.196273+00:00"
   },
   {
     "jira_ticket": "HND-520",
-    "comment": "Program Risk Intelligence -- weekly classification (2025-10-31)\nStatus: BLOCKED (signal: competing_objectives)\nThe due date (2025-10-24) has already passed as of this report (2025-10-31), and the vendor states the dealer portal release calendar work has been entirely superseded by an escalated Honda firmware defect, with no ETA to resume. Progress has effectively stopped with no forward movement until the competing priority is resolved.",
-    "posted_at": "2026-08-07T17:02:39.838903+00:00"
+    "comment": "Program Risk Intelligence -- weekly update (2025-10-31)\n\nReply received:\n\"Sorry for the delay getting back to you. We've been fully heads-down on a firmware defect Honda escalated Monday -- it's taken priority over everything else including the dealer portal release calendar you asked about. No ETA yet on when we can get back to it. I'd call this High risk.\"\n\nAI classification: BLOCKED (signal: competing_objectives)\nThe due date (2025-10-24) has already passed with the report coming a week late, and the team states it is fully consumed by an escalated Honda firmware defect with no ETA to return to the dealer portal release calendar work. Progress has effectively stopped on this deliverable due to the unplanned emergency taking priority.",
+    "posted_at": "2026-08-10T17:19:58.196606+00:00"
   },
   {
     "jira_ticket": "HND-88",
-    "comment": "Program Risk Intelligence -- weekly classification (2025-10-31)\nStatus: BLOCKED (signal: unowned_escalation)\nThe due date (2025-10-25) has already passed as of this report (2025-10-31), and the team is still waiting on Legal to confirm the consent taxonomy with no forward movement possible until that happens. Despite growing nervousness, there's no indication any leader or decision-maker has picked up the escalation to push Legal, so the dependency remains unresolved and unowned.",
-    "posted_at": "2026-08-07T17:02:39.839220+00:00"
+    "comment": "Program Risk Intelligence -- weekly update (2025-10-31)\n\nReply received:\n\"Same as last week honestly -- still waiting on Legal to confirm the consent taxonomy before we can finalize our mapping. Our due date is tomorrow. It's really a dependency on their side, so Medium I guess, though I'm getting nervous about the date.\"\n\nAI classification: BLOCKED (signal: bottlenecked)\nThe team cannot finalize their mapping until Legal confirms the consent taxonomy, and this is explicitly a repeat of last week's status with no progress. The due date (2025-10-25) has already passed as of this report (2025-10-31), confirming the deadline was missed while stalled on this unresolved external dependency.",
+    "posted_at": "2026-08-10T17:19:58.196877+00:00"
   },
   {
     "jira_ticket": "HND-611",
-    "comment": "Program Risk Intelligence -- weekly classification (2025-10-31)\nStatus: AT_RISK (signal: competing_objectives)\nThe due date (2025-10-24) has already passed as of this report (2025-10-31), and now an unplanned partner production emergency has pulled two engineers off the SSO cert renewal work, leaving zero buffer before tomorrow's deploy. Although the team believes the deploy will still happen, the emergency has consumed all schedule slack, making any further disruption likely to cause a miss.",
-    "posted_at": "2026-08-07T17:02:39.839544+00:00"
+    "comment": "Program Risk Intelligence -- weekly update (2025-10-31)\n\nReply received:\n\"New emergency this morning -- a partner integration broke in prod because of an upstream API change on their end. Pulled two people off the SSO cert renewal to deal with it. SSO deploy tomorrow should still be fine but we've got zero buffer left now if anything else comes up. Medium risk.\"\n\nAI classification: AT_RISK (signal: competing_objectives)\nThe due date (2025-10-24) has already passed as of this report (2025-10-31), and an unplanned production emergency has pulled two people off the SSO cert renewal work, leaving zero buffer for the still-pending deploy. Work is still moving (deploy planned for tomorrow) but the emergency has directly superseded the reported workstream with no slack left.",
+    "posted_at": "2026-08-10T17:19:58.197121+00:00"
   }
 ]

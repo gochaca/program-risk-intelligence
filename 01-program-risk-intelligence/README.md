@@ -250,6 +250,20 @@ Caught by inspecting the actual comments before assuming success, and fixed prop
 
 Documenting both here rather than quietly fixing them, since "here's what broke and how it got caught and fixed" is exactly the kind of thing worth being honest about in a project whose whole pitch is catching risk before it becomes a blocker.
 
+### The first real unattended run
+
+The Friday 3pm `report` job fired on its own for the first time on 2026-08-07 — the very first scheduled occurrence after activation — with no one watching. `logs/report.log` shows it ran cleanly: collected updates, classified, posted comments to real Jira tickets. That run happened to land *before* the `CRH-2` test reply was sent that same day, so it correctly saw zero replies at that moment — not a bug, just real-time state at whatever instant a scheduled job fires.
+
+Investigating that, though, turned up a real bug: `collect_responses()`'s non-response count was based on `self_reported_risk is None`, but a genuine reply that just doesn't state an explicit risk level (e.g. "copy's done, no blockers" with no Low/Medium/High) *also* has `self_reported_risk: None` — so a real reply and a genuine silence were indistinguishable in that count, even though the classification itself was always correct. Fixed by tracking whether a reply was actually found, explicitly, rather than inferring it after the fact from an unrelated field.
+
+### Jira comments now include the actual reply, not just the AI's take
+
+`post_classifications_to_jira()` used to post only the AI's classification and reasoning — never what the person actually wrote. Now every comment includes the real reply text verbatim (or "No reply received..." when genuinely silent) alongside the AI's classification, so anyone reading the Jira ticket sees the source material, not just a conclusion drawn from it.
+
+The raw reply is carried as a separate `raw_reply` field, deliberately kept out of every Claude call (`classify_update`, `detect_patterns`, `generate_team_report`, `generate_exec_report`) via a small `_without_raw_reply()` strip at each call site — same discipline as stripping `ground_truth_*` fields elsewhere in this codebase. It's just for the Jira comment, and for anyone reading `live_classified_updates.json` directly.
+
+Validating this against the real Jira project surfaced one more real bug, in the same family as the earlier `simulate`-touched-a-real-account incident: `simulate` mode and the live phases were sharing a single `cycle_state.json`. Running `simulate` (as part of testing this feature) silently overwrote the real `sent_at`/`awaiting_response` with the mock fixture's values, so the next real `report` run searched from the wrong date and reported `CRH-2` as a non-response even though the reply genuinely existed. Fixed by giving `simulate` its own `cycle_state.simulate.json`, entirely separate from the live state file — there's no longer a shared file for one mode to corrupt for the other. Re-validated afterward: the real Jira comment above (`ON_TRACK`, quoting the real reply) is from that corrected run.
+
 ### Scheduling
 
 [`launchd/`](./launchd/) has three macOS launchd agent definitions, one per phase, following the cadence set earlier: first-request Wednesday 9am, followup Friday 8am, report Friday 3pm (leaving hours for Friday-morning follow-up replies to land before the report generates). launchd rather than cron, since it's the native, more reliable scheduler on macOS.
