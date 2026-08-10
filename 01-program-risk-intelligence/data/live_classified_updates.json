@@ -9,12 +9,12 @@
       "due_date": "2025-10-31",
       "report_date": "2025-10-31",
       "raw_reply": "Hi -- update on CCPA: legal finalized copy and sent it over to us, Mobile, and Dealer Systems. We're starting the website updates this week for the Oct 31 date. I'd call this Medium risk mainly because we've got multiple sites to update and validate and only about a week to do it.",
-      "update_text": "CCPA update: Legal has finalized the copy and sent it over to the sender's team, Mobile, and Dealer Systems. Website updates are starting this week to meet the Oct 31 deadline.",
+      "update_text": "CCPA update: Legal has finalized the copy and sent it to the team, Mobile, and Dealer Systems. Website updates are starting this week ahead of the Oct 31 deadline.",
       "self_reported_risk": "Medium",
-      "self_reported_rationale": "There are multiple sites that need to be updated and validated, but only about a week to complete that work.",
+      "self_reported_rationale": "There are multiple sites that need to be updated and validated, with only about a week to complete the work.",
       "ai_classification": "blocked",
       "ai_signal": "bottlenecked",
-      "ai_reason": "Website updates are only 'starting this week' to meet an Oct 31 deadline, but the report date is Oct 31 itself, meaning the work has not been completed and there's no time left to finish and validate multiple sites. The team also relied on Legal finalizing copy before starting, and now the due date has arrived with implementation still not done."
+      "ai_reason": "The report date is the due date (Oct 31) itself, yet the update states website updates are only 'starting this week' after Legal just finalized copy. With multiple sites needing updates and validation, there is effectively no way to complete and validate the work by end of day, making this a missed/blocked deadline rather than merely at-risk."
     },
     {
       "team": "Mobile App Engineering",
@@ -25,12 +25,12 @@
       "due_date": "2025-10-31",
       "report_date": "2025-10-31",
       "raw_reply": "Got the CCPA copy from Legal on the 22nd. Problem is our release train is locked through 10/25 for the Q4 security patch, so we can't start implementation until right after that -- targeting the 30th, which is basically no buffer before the 31st deadline. I'd flag this High.",
-      "update_text": "Sender received the CCPA copy from Legal on the 22nd. However, the release train is locked through 10/25 for the Q4 security patch, so implementation can't start until right after that. They're targeting the 30th to implement, which leaves essentially no buffer before the 10/31 deadline.",
+      "update_text": "Sender received the CCPA copy from Legal on the 22nd. However, the release train is locked through 10/25 for the Q4 security patch, so implementation can't start until right after that. They're targeting a start around the 30th, which leaves essentially no buffer before the 10/31 deadline.",
       "self_reported_risk": "High",
-      "self_reported_rationale": "The release train lock through 10/25 delays the start of implementation until the 30th, leaving basically no buffer before the 10/31 deadline.",
+      "self_reported_rationale": "Implementation can't begin until after the release train unlocks on 10/25, pushing the targeted work to the 30th, which leaves basically no buffer before the 10/31 deadline.",
       "ai_classification": "at_risk",
       "ai_signal": "bottlenecked",
-      "ai_reason": "Implementation was stalled by the release train lock through 10/25, and the team is now targeting a 10/30 start with zero buffer before the 10/31 due date; any slippage in that single-day implementation window (report date is the due date itself) will cause a miss."
+      "ai_reason": "Implementation was blocked by the release train lock until 10/25 and only targeted to start around the 30th, leaving no buffer before the 10/31 due date, which is today. This is a severe schedule compression that likely means the deadline is already missed or at extreme risk, despite the team framing it as still 'targeting' a start date."
     },
     {
       "team": "Dealer Systems Integration",
@@ -41,12 +41,12 @@
       "due_date": "2025-10-31",
       "report_date": "2025-10-31",
       "raw_reply": "Still waiting on BrightPath to confirm their release calendar so we can push the CCPA copy to dealer-facing sites -- we asked on the 15th and haven't heard back. Assuming they get back to us soon we should still make the date, so I'll say Medium for now.",
-      "update_text": "Sender is still waiting on BrightPath to confirm their release calendar before the CCPA copy can be pushed to dealer-facing sites. They requested this on the 15th and have not yet received a response. If BrightPath responds soon, they expect to still make the date.",
+      "update_text": "Sender is still waiting on BrightPath to confirm their release calendar in order to push the CCPA copy live on dealer-facing sites. They followed up on the 15th and have not yet received a response. If BrightPath responds soon, they expect to still make the target date.",
       "self_reported_risk": "Medium",
-      "self_reported_rationale": "They are waiting on BrightPath's response and assume they will still make the date if BrightPath gets back to them soon, but the lack of response since the 15th introduces uncertainty.",
+      "self_reported_rationale": "Assuming BrightPath gets back to them soon, they should still make the date, but the lack of response since the 15th introduces uncertainty.",
       "ai_classification": "blocked",
       "ai_signal": "bottlenecked",
-      "ai_reason": "Due date is today (10/31) and the team cannot push CCPA copy to dealer-facing sites without BrightPath's release calendar confirmation, which has been outstanding since a request on the 15th with no response -- over two weeks of silence. Progress has effectively stalled on this external dependency with no indication BrightPath is actively engaged, making the hope to 'still make the date' unrealistic given zero forward movement."
+      "ai_reason": "Progress is stalled entirely on BrightPath confirming their release calendar; no response since the follow-up on the 15th, and today is the actual due date (10/31) with no path forward until BrightPath replies. This is a hard external dependency blocking a regulatory deadline, not just a risk being managed."
     },
     {
       "team": "Data Privacy & Legal Ops",
@@ -57,12 +57,12 @@
       "due_date": "2025-10-31",
       "report_date": "2025-10-31",
       "raw_reply": "Consent taxonomy review is in progress, but this week we got pulled onto the CCPA copy work plus an unplanned DSAR audit request from Compliance, so it's sliding to next week. Low risk from our side -- our own due date isn't until the 31st.",
-      "update_text": "Consent taxonomy review is in progress, but the team was pulled onto CCPA copy work plus an unplanned DSAR audit request from Compliance this week, so the taxonomy review is sliding to next week.",
+      "update_text": "Consent taxonomy review is in progress but has slipped to next week, as the team was pulled onto CCPA copy work plus an unplanned DSAR audit request from Compliance this week.",
       "self_reported_risk": "Low",
-      "self_reported_rationale": "Their own due date isn't until the 31st, so the slip to next week still leaves enough buffer.",
+      "self_reported_rationale": "Their own due date isn't until the 31st, so despite the slip to next week, there's enough buffer before the deadline.",
       "ai_classification": "at_risk",
       "ai_signal": "competing_objectives",
-      "ai_reason": "The team was pulled onto unplanned CCPA copy work and a DSAR audit request from Compliance, causing the taxonomy review to slide to next week -- but today, October 31, is the actual due date, so the self-reported 'Low' risk rationale (citing buffer that doesn't exist) understates the threat to the deadline."
+      "ai_reason": "The due date is today (2025-10-31), yet the team reports the work has slipped to next week because they were pulled onto CCPA copy work and an unplanned DSAR audit request. Their self-reported 'Low' risk rationale relies on a buffer that no longer exists since today is the actual due date, so this will miss the deadline without intervention."
     },
     {
       "team": "Acme Cloud Infrastructure",
@@ -73,12 +73,12 @@
       "due_date": "2025-11-07",
       "report_date": "2025-10-31",
       "raw_reply": "Apologies for the slow reply -- been heads down. Cutover rehearsal originally set for 10/29 slipped to 11/3, staffing shortage on our end. Second time this has moved in three weeks. Still think we can hit 11/7 for the actual cutover. Call it Medium.",
-      "update_text": "Sender apologized for the delayed reply due to being heads down. The cutover rehearsal, originally scheduled for 10/29, slipped to 11/3 because of a staffing shortage on their end. This is the second time the rehearsal date has moved in three weeks. Despite this, sender still believes the actual cutover on 11/7 is achievable.",
+      "update_text": "The cutover rehearsal, originally scheduled for 10/29, has slipped to 11/3 due to a staffing shortage on their end. This is the second time the rehearsal date has moved in three weeks. Despite this, the sender still believes the actual cutover date of 11/7 is achievable.",
       "self_reported_risk": "Medium",
-      "self_reported_rationale": "Not explicitly stated beyond noting this is the second slip in three weeks (staffing shortage), but sender still believes the 11/7 cutover date is achievable.",
+      "self_reported_rationale": "Not explicitly detailed beyond noting the repeated slippage (rehearsal has now moved twice in three weeks due to staffing shortages), though they still believe the 11/7 cutover date is achievable.",
       "ai_classification": "at_risk",
       "ai_signal": "bottlenecked",
-      "ai_reason": "The rehearsal\u2014a critical precursor to the 11/7 cutover\u2014has now slipped twice in three weeks due to staffing shortages, and the rescheduled date (11/3) leaves almost no buffer before the cutover. Given this repeated slippage pattern and vendor staffing issues, the claim that 11/7 is still achievable is optimistic and unsupported by a concrete mitigation plan."
+      "ai_reason": "The cutover rehearsal has slipped twice in three weeks due to vendor staffing shortages, now landing just 4 days before the 11/7 cutover date, leaving no buffer for issues found during rehearsal. Despite the vendor's optimism, the recurring pattern of staffing-driven delays and compressed timeline credibly threatens the due date."
     },
     {
       "team": "Acme Cloud Infrastructure",
@@ -94,7 +94,7 @@
       "self_reported_rationale": null,
       "ai_classification": "blocked",
       "ai_signal": "unowned_escalation",
-      "ai_reason": "The vendor has not responded to two outreach attempts (initial and follow-up), and the due date is today (2025-10-31) with no forward progress possible until they engage. There's no indication anyone internally has escalated this non-responsiveness to force action."
+      "ai_reason": "The vendor has failed to respond to two outreach attempts (initial request plus follow-up) and it is now the actual due date, with no indication anyone internally has escalated or taken ownership to push the vendor for a response. Progress cannot continue without vendor engagement, and the due date is being missed with no plan in place."
     },
     {
       "team": "Regional Marketing - NA",
@@ -105,12 +105,12 @@
       "due_date": "2025-10-31",
       "report_date": "2025-10-31",
       "raw_reply": "New one this week -- CMO's office wants us to fast-track a competitor-response campaign ahead of the holiday campaign we already had planned. Still figuring out sequencing. I think we can deliver both but it's not locked in yet, so Medium risk on the original holiday timeline.",
-      "update_text": "A new priority came in this week: the CMO's office wants to fast-track a competitor-response campaign ahead of the previously planned holiday campaign. The sender is still working out the sequencing of the two campaigns. They believe both can likely be delivered, but the plan isn't locked in yet.",
+      "update_text": "A new priority came in this week: the CMO's office wants to fast-track a competitor-response campaign ahead of the previously planned holiday campaign. The sender is still working out sequencing between the two efforts. They believe both can likely be delivered, but this isn't locked in yet.",
       "self_reported_risk": "Medium",
-      "self_reported_rationale": "The sequencing of the new competitor-response campaign against the existing holiday campaign is not yet locked in, creating uncertainty for the original holiday timeline, though the sender believes both can be delivered.",
+      "self_reported_rationale": "Sequencing between the new fast-tracked competitor-response campaign and the original holiday campaign is not yet locked in, though the sender thinks both can be delivered.",
       "ai_classification": "at_risk",
       "ai_signal": "competing_objectives",
-      "ai_reason": "The CMO's office has injected an unplanned competitor-response campaign that must be sequenced against the existing holiday campaign, and on the due date itself the plan is still not locked in. This is a classic competing-objectives situation threatening the timeline, though the sender believes both can still be delivered."
+      "ai_reason": "The CMO's office has injected an unplanned competitor-response campaign that must be sequenced against the original holiday campaign, and this sequencing is not yet locked in as of the due date itself. Since this update is due today (2025-10-31) but the plan for both deliverables is still unresolved, the due date is credibly threatened by this competing priority."
     },
     {
       "team": "BrightPath QA Services",
@@ -121,12 +121,12 @@
       "due_date": "2025-10-24",
       "report_date": "2025-10-31",
       "raw_reply": "Sorry for the delay getting back to you. We've been fully heads-down on a firmware defect Honda escalated Monday -- it's taken priority over everything else including the dealer portal release calendar you asked about. No ETA yet on when we can get back to it. I'd call this High risk.",
-      "update_text": "The sender apologized for the delayed reply, noting the team has been fully focused on a firmware defect that Honda escalated on Monday. This issue has taken priority over everything else, including the dealer portal release calendar work that was asked about. There is currently no ETA for when they can return to that work.",
+      "update_text": "The sender apologized for the delayed response, explaining that the team has been fully focused on a firmware defect that Honda escalated on Monday. This issue has taken priority over other work, including the dealer portal release calendar that was asked about. There is currently no ETA for when they can return to that work.",
       "self_reported_risk": "High",
-      "self_reported_rationale": "The team is fully consumed by an escalated Honda firmware defect with no ETA for returning to the dealer portal release calendar work, which has been deprioritized as a result.",
+      "self_reported_rationale": "The team is fully consumed by an escalated Honda firmware defect with no ETA for when they can get back to the dealer portal release calendar work.",
       "ai_classification": "blocked",
       "ai_signal": "competing_objectives",
-      "ai_reason": "The due date (2025-10-24) has already passed with the report coming a week late, and the team states it is fully consumed by an escalated Honda firmware defect with no ETA to return to the dealer portal release calendar work. Progress has effectively stopped on this deliverable due to the unplanned emergency taking priority."
+      "ai_reason": "The due date (10/24) has already passed as of this report (10/31), and BrightPath states they are fully consumed by an escalated Honda firmware defect with no ETA to return to the dealer portal release calendar work, meaning no forward progress is currently possible on this item."
     },
     {
       "team": "Customer Data Platform (CDP) Team",
@@ -137,12 +137,12 @@
       "due_date": "2025-10-25",
       "report_date": "2025-10-31",
       "raw_reply": "Same as last week honestly -- still waiting on Legal to confirm the consent taxonomy before we can finalize our mapping. Our due date is tomorrow. It's really a dependency on their side, so Medium I guess, though I'm getting nervous about the date.",
-      "update_text": "No change from last week: the sender is still waiting on Legal to confirm the consent taxonomy before they can finalize their mapping. The due date is tomorrow, and this is a dependency on Legal's side, though the sender is getting nervous about hitting the date.",
+      "update_text": "No change from last week: the team is still waiting on Legal to confirm the consent taxonomy before they can finalize their mapping. The due date is tomorrow, and this is a blocking dependency on Legal's side.",
       "self_reported_risk": "Medium",
-      "self_reported_rationale": "It's a dependency on Legal's side to confirm the consent taxonomy, though the sender notes they are getting nervous about the approaching due date.",
+      "self_reported_rationale": "It's a dependency on Legal's side, though the sender noted they are getting nervous about the approaching due date.",
       "ai_classification": "blocked",
-      "ai_signal": "bottlenecked",
-      "ai_reason": "The team cannot finalize their mapping until Legal confirms the consent taxonomy, and this is explicitly a repeat of last week's status with no progress. The due date (2025-10-25) has already passed as of this report (2025-10-31), confirming the deadline was missed while stalled on this unresolved external dependency."
+      "ai_signal": "unowned_escalation",
+      "ai_reason": "The team has been waiting on Legal to confirm the consent taxonomy with no change from last week, and the due date (Oct 25) has already passed as of this report (Oct 31), with no forward movement possible on the mapping until Legal responds. Despite being self-rated Medium, there's no indication any leader has escalated or picked up this stalled Legal dependency, so it's an unowned escalation that has caused a real, already-realized delay.\""
     },
     {
       "team": "Enterprise Identity & Access Management",
@@ -153,12 +153,12 @@
       "due_date": "2025-10-24",
       "report_date": "2025-10-31",
       "raw_reply": "New emergency this morning -- a partner integration broke in prod because of an upstream API change on their end. Pulled two people off the SSO cert renewal to deal with it. SSO deploy tomorrow should still be fine but we've got zero buffer left now if anything else comes up. Medium risk.",
-      "update_text": "An emergency came up this morning: a partner integration broke in production due to an upstream API change on the partner's side. Two people were pulled off the SSO cert renewal work to handle this emergency. The SSO deploy scheduled for tomorrow should still happen on time, but there is now zero buffer left if any further issues arise.",
+      "update_text": "An emergency came up this morning: a partner integration broke in production due to an upstream API change on the partner's end. Two people were pulled off the SSO cert renewal work to handle this emergency. The SSO deploy planned for tomorrow should still happen as scheduled, but the team now has zero buffer left if any further issues arise.",
       "self_reported_risk": "Medium",
-      "self_reported_rationale": "Two people were pulled off the SSO cert renewal to fix the prod emergency, leaving zero buffer left if anything else comes up, even though the SSO deploy tomorrow should still be fine.",
+      "self_reported_rationale": "The SSO deploy should still be fine, but with zero buffer left, any additional issue would put the timeline at risk.",
       "ai_classification": "at_risk",
       "ai_signal": "competing_objectives",
-      "ai_reason": "The due date (2025-10-24) has already passed as of this report (2025-10-31), and an unplanned production emergency has pulled two people off the SSO cert renewal work, leaving zero buffer for the still-pending deploy. Work is still moving (deploy planned for tomorrow) but the emergency has directly superseded the reported workstream with no slack left."
+      "ai_reason": "The due date (2025-10-24) has already passed as of this report (2025-10-31), and an unplanned emergency partner integration incident pulled two people off the SSO cert renewal work, leaving zero buffer. While the deploy is still planned for tomorrow, the team explicitly states any further issue would jeopardize the timeline, indicating credible risk to an already overdue deliverable."
     }
   ]
 }

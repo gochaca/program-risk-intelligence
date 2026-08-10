@@ -107,10 +107,11 @@ def detect_patterns(classified_updates: list[dict], client: Anthropic | None = N
         for update in classified_updates
     ]
 
-    # Forced tool-use occasionally (observed ~twice in dozens of calls during
-    # development) returns a tool_use block missing the expected key -- a
-    # transient API-side glitch, not a prompt problem. One retry has always
-    # been enough; if it fails twice in a row that's a real error, not flakiness.
+    # Forced tool-use occasionally returns a malformed response -- either
+    # missing the "patterns" key entirely, or (seen once, 2026-08-10) present
+    # but with plain strings instead of pattern objects as its items. Both
+    # are transient API-side glitches, not prompt problems. One retry has
+    # always been enough; if it fails twice in a row that's a real error.
     last_error = None
     for attempt in range(2):
         response = client.messages.create(
@@ -124,10 +125,12 @@ def detect_patterns(classified_updates: list[dict], client: Anthropic | None = N
         tool_use = next(block for block in response.content if block.type == "tool_use")
         try:
             patterns = tool_use.input["patterns"]
+            if not isinstance(patterns, list) or not all(isinstance(p, dict) for p in patterns):
+                raise TypeError(f"expected a list of pattern objects, got {patterns!r}")
             break
-        except KeyError as e:
+        except (KeyError, TypeError) as e:
             last_error = e
-            print(f"detect_patterns: malformed tool response on attempt {attempt + 1}, retrying...")
+            print(f"detect_patterns: malformed tool response on attempt {attempt + 1} ({e}), retrying...")
     else:
         raise RuntimeError("detect_patterns: malformed tool response on both attempts") from last_error
     for p in patterns:

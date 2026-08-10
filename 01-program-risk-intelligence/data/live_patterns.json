@@ -3,30 +3,38 @@
     {
       "pattern_type": "shared_dependency",
       "tickets_involved": [
-        "HND-146",
-        "HND-146b",
-        "HND-146c"
+        "HND-146c",
+        "HND-520"
       ],
-      "description": "All three CCPA website update tickets (Web Platform, Mobile, Dealer Systems) trace back to the same root chain: Legal's copy finalization plus each team's own downstream constraint (release train lock, BrightPath silence), all converging on the same Oct 31 deadline with no team having finished implementation as of the report date.",
-      "why_it_matters": "This isn't three independent risks -- it's one initiative (CCPA compliance) failing across all its delivery channels simultaneously. Program lead should treat this as a single compliance miss, escalate jointly to Legal/BrightPath leadership today, and prepare a unified remediation/communication plan rather than tracking three separate tickets."
+      "description": "Dealer Systems (HND-146c) is blocked waiting on BrightPath to confirm the release calendar for CCPA copy, and BrightPath's own update (HND-520) confirms exactly why: they've been fully consumed since Monday by an escalated Honda firmware defect and have given no ETA to return to the dealer portal release calendar. This is the same root cause surfacing from both sides of the relationship.",
+      "why_it_matters": "This isn't a generic vendor delay -- it's a named, confirmed root cause with no ETA. The program lead should escalate directly to BrightPath leadership (not just the working-level contact) to get a firm commitment date, and in parallel prepare a fallback plan for dealer-facing CCPA compliance in case BrightPath doesn't resurface in time."
     },
     {
       "pattern_type": "dependency_chain",
       "tickets_involved": [
-        "HND-146c",
-        "HND-520"
+        "HND-89",
+        "HND-88"
       ],
-      "description": "Dealer Systems (HND-146c) is blocked waiting on BrightPath to confirm the release calendar. BrightPath's own update (HND-520) reveals why: BrightPath is fully consumed by an escalated Honda firmware defect with no ETA to return to release calendar work.",
-      "why_it_matters": "Dealer Systems' 'waiting on BrightPath' isn't a mystery -- BrightPath has explicitly deprioritized this indefinitely. Program lead should escalate directly to BrightPath account management now, since simply waiting will not resolve it, and Dealer Systems should be told not to expect movement without executive-level vendor escalation."
+      "description": "CDP Team (HND-88) has been blocked past its Oct 25 due date waiting on Legal to confirm the consent taxonomy. Data Privacy & Legal Ops (HND-89), who owns that taxonomy review, reports it has slipped to next week because they were pulled onto CCPA copy work and an unplanned DSAR audit. The blocker named in HND-88 is directly explained by the delay in HND-89.",
+      "why_it_matters": "CDP's blocker won't resolve on its own -- Legal Ops needs to be told their taxonomy review is now blocking a second overdue deliverable, not just their own. Program lead should prioritize the taxonomy review above the DSAR audit or bring in extra help, since two teams are now stalled on it."
     },
     {
       "pattern_type": "shared_dependency",
       "tickets_involved": [
-        "HND-89",
-        "HND-88"
+        "HND-146",
+        "HND-146b",
+        "HND-146c"
       ],
-      "description": "Both Data Privacy & Legal Ops (HND-89) and CDP Team (HND-88) are stalled on the same root cause: Legal has not finalized/confirmed the consent taxonomy, and Legal itself has been diverted onto CCPA copy work and a DSAR audit.",
-      "why_it_matters": "Two separate teams are blocked on the same Legal bottleneck, and Legal's own capacity is fragmented across compliance asks. Program lead should consolidate these Legal dependencies into one prioritized ask to Legal leadership rather than letting two teams independently chase the same source."
+      "description": "All three CCPA website update tickets (Web Platform, Mobile, Dealer Systems) trace their compressed or missed timelines back to the same upstream event: Legal only finalized and distributed the CCPA copy in the days immediately before the Oct 31 deadline (with Mobile noting delivery on the 22nd and additional release-train lock time eating into their window). Each team independently describes a 'no buffer' situation stemming from the same late Legal handoff.",
+      "why_it_matters": "This is a single-source failure (Legal's copy finalization timing) manifesting as three separate 'blocked/at_risk' tickets. Rather than managing each site team individually, the program lead should address the root cause -- push Legal to finalize regulatory copy earlier in future cycles -- and treat this week's three tickets as one incident for reporting purposes, since fixing one team's downstream execution won't prevent recurrence."
+    },
+    {
+      "pattern_type": "team_overload",
+      "tickets_involved": [
+        "HND-89"
+      ],
+      "description": "Data Privacy & Legal Ops was pulled onto both CCPA copy work and an unplanned DSAR audit request in the same week that their own consent taxonomy review (HND-89) was due, causing it to slip. This single team absorbed two competing asks simultaneously while carrying a due deliverable.",
+      "why_it_matters": "Flag this team for capacity relief -- if another unplanned request lands next week, both the taxonomy review and any new ask will slip further. Note: strengthened as a cross-team pattern given HND-88 depends on this same team's output being late (see dependency_chain)."
     },
     {
       "pattern_type": "systemic_theme",
@@ -36,26 +44,16 @@
         "HND-520",
         "HND-611"
       ],
-      "description": "Four unrelated teams (Legal Ops, Regional Marketing, BrightPath vendor, IAM) all report the same competing_objectives signal this week: unplanned emergencies or executive-driven priorities (DSAR audit, CMO competitor campaign, Honda firmware escalation, production incident) displacing planned committed work.",
-      "why_it_matters": "This is a program-wide capacity/prioritization problem, not isolated incidents. Program lead should raise this pattern with portfolio governance to establish clearer emergency-intake and resourcing protocols, since multiple teams are absorbing unplanned work with no slack, and it's now recurring weekly across teams and vendors."
+      "description": "Four unrelated tickets across four different teams/vendors (Data Privacy & Legal Ops, Regional Marketing, BrightPath QA, Enterprise IAM) all cite the same signal: unplanned, higher-priority work (DSAR audit, CMO competitor campaign, escalated firmware defect, partner integration incident) displacing previously committed deliverables in the same week.",
+      "why_it_matters": "This is a program-wide capacity/prioritization problem, not isolated bad luck. The program lead should raise this pattern to leadership as evidence that intake of 'emergency' work has no governance -- teams have no mechanism to push back or get relief, and planned commitments are silently absorbing the cost. Consider instituting a lightweight triage/escalation path for unplanned work before it silently displaces committed deliverables."
     },
     {
       "pattern_type": "team_overload",
       "tickets_involved": [
-        "HND-146",
-        "HND-89"
+        "HND-611"
       ],
-      "description": "Data Privacy & Legal Ops is simultaneously named as the source of the CCPA copy (HND-146) and separately reports being pulled onto that same CCPA copy work plus an unplanned DSAR audit, sliding their own Consent Taxonomy Review (HND-89).",
-      "why_it_matters": "Legal Ops is a single point of strain feeding multiple regulatory initiatives at once. Program lead should check whether Legal Ops has enough headcount to cover CCPA, DSAR, and taxonomy work concurrently, or whether one of these must be formally reprioritized this week."
-    },
-    {
-      "pattern_type": "team_overload",
-      "tickets_involved": [
-        "HND-310",
-        "HND-311"
-      ],
-      "description": "Acme Cloud Infrastructure has two vendor-side issues this week: repeated rehearsal slippage on the cutover (HND-310) due to staffing shortage, and complete non-responsiveness on the security review (HND-311). Both point to the same vendor being stretched thin ahead of a major cutover.",
-      "why_it_matters": "The staffing shortage cited in HND-310 likely explains the silence in HND-311 -- the vendor may be triaging by dropping less visible asks. Program lead should escalate to Acme account management now, before the 11/7 cutover, since both signals together suggest broader vendor capacity risk, not two isolated delays."
+      "description": "Enterprise IAM had two people pulled off SSO cert renewal work to handle an emergency partner integration incident, leaving zero buffer on the SSO deploy timeline. This is a single team absorbing an unplanned incident directly against a planned, already-overdue deliverable.",
+      "why_it_matters": "With zero buffer remaining, any additional issue tomorrow will cause a second miss on top of the already-passed Oct 24 due date. Program lead should confirm additional support is available before tomorrow's SSO deploy rather than relying on the team's optimistic 'should still happen' framing."
     }
   ]
 }

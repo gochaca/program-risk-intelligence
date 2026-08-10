@@ -1,33 +1,27 @@
-# Executive Program Status — Week of Oct 31
+# Executive Summary — Weekly Program Status
 
-## 1. Health Snapshot
-**On Track: 0 | At Risk: 5 | Blocked: 5 | Total: 10**
+## Health Snapshot
+**On track: 0 | At risk: 5 | Blocked: 5 | Total: 10**
 
-## 2. Cross-Source Patterns (Action Required)
+## Cross-Source Patterns (Portfolio-Level Issues)
 
-**⚠️ Systemic Theme — Unplanned work is displacing committed work, portfolio-wide**
-Four separate teams (Legal Ops, Regional Marketing, BrightPath vendor, IAM) all report the same root issue this week: emergencies or executive-driven asks (a DSAR audit, a CMO-driven competitor campaign, a Honda firmware escalation, a production incident) are bumping planned deliverables, with zero slack left in any of them.
-**Action:** Raise with portfolio governance — this needs a clearer emergency-intake/resourcing protocol, not per-team firefighting. It's recurring weekly.
+**⚠️ Systemic Theme: Unplanned work is silently displacing committed deliverables.**
+Four separate teams/vendors (Data Privacy & Legal Ops, Regional Marketing, BrightPath QA, Enterprise IAM) each missed or jeopardized a commitment this week because higher-priority "emergency" work (DSAR audit, CMO campaign, firmware defect, partner incident) got inserted with no governance. This is a program-wide capacity/prioritization gap, not isolated bad luck.
+**Action:** Leadership should establish a lightweight triage/escalation path for unplanned work so it doesn't silently absorb committed deliverables going forward.
 
-**CCPA Website Updates — single compliance miss, not three separate risks**
-Web Platform, Mobile, and Dealer Systems are all trying to hit the same Oct 31 CCPA deadline and all remain unfinished as of today, tracing back to the same root chain (Legal's copy finalization + each team's own downstream blocker).
-**Action:** Escalate jointly to Legal/BrightPath leadership today and prepare one unified remediation and communication plan — treat as one compliance miss.
+**CCPA copy handoff caused three downstream misses.** Web Platform, Mobile, and Dealer Systems (HND-146, 146b, 146c) all trace their compressed/missed timelines to Legal finalizing CCPA copy only days before the Oct 31 deadline.
+**Action:** Treat as one incident, not three; push Legal to finalize regulatory copy earlier in future cycles.
 
-**Dealer Systems blocked because BrightPath has deprioritized it — not a mystery**
-Dealer Systems is waiting on BrightPath for the release calendar; BrightPath's own report confirms they're fully consumed by an escalated Honda firmware defect with no ETA to return.
-**Action:** Escalate directly to BrightPath account management now — waiting will not resolve this.
+**BrightPath vendor blocker confirmed from both sides.** Dealer Systems (HND-146c) is blocked waiting on BrightPath (HND-520), who confirm they're fully consumed by an escalated Honda firmware defect with no ETA.
+**Action:** Escalate directly to BrightPath leadership for a firm date; prepare a fallback plan for dealer-facing CCPA compliance.
 
-**Consent taxonomy dependency has two teams stuck behind the same Legal bottleneck**
-Legal Ops (HND-89) and CDP (HND-88) are both stalled waiting on Legal to finalize the consent taxonomy — and Legal itself is fragmented across CCPA and DSAR work.
-**Action:** Consolidate into one prioritized ask to Legal leadership rather than two teams independently chasing the same source.
+**Legal Ops delay now blocking two deliverables.** Legal Ops' slipped taxonomy review (HND-89) is the direct cause of CDP's stalled work (HND-88), which is already past due.
+**Action:** Prioritize the taxonomy review above the DSAR audit, or add support — two teams are now stalled on it.
 
-**Legal Ops is a single point of strain across multiple regulatory initiatives**
-Legal Ops is both the source of CCPA copy and reports being pulled onto that same work plus a DSAR audit, sliding their own taxonomy review.
-**Action:** Confirm whether Legal Ops has headcount to cover all three threads concurrently, or formally reprioritize one this week.
+**Enterprise IAM has zero buffer left.** Two staff were pulled to an emergency partner incident, leaving no slack on the already-overdue SSO cert renewal (HND-611).
+**Action:** Confirm additional support is available before tomorrow's deploy rather than relying on optimistic framing.
 
-**Acme Cloud Infrastructure vendor shows signs of broader capacity strain ahead of cutover**
-Rehearsal has slipped twice due to staffing shortages (HND-310), and separately the vendor has gone silent on the security review with two unanswered outreach attempts (HND-311) — likely the same underlying staffing issue.
-**Action:** Escalate to Acme account management before the Nov 7 cutover; treat as one vendor capacity risk, not two isolated delays.
+## Remaining At-Risk Items Needing Attention
 
-## 3. Remaining At-Risk/Blocked Tickets
-All 10 at-risk/blocked tickets are addressed in the patterns above — no additional standalone items requiring separate attention this week.
+- **HND-310 (Acme Cloud Infrastructure) — Cutover Rehearsal:** Rehearsal has slipped twice in three weeks due to vendor staffing shortages, now just 4 days before the Nov 7 cutover with no buffer. *Needs:* Leadership visibility on vendor staffing risk ahead of cutover.
+- **HND-311 (Acme Cloud Infrastructure) — Security Review:** Vendor has not responded to two outreach attempts; due date has passed with no internal escalation in place. *Needs:* Leadership to direct escalation to vendor management, as this is currently unowned.

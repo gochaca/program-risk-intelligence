@@ -1,103 +1,88 @@
 # Weekly Program Status Report — Team-Level Detail
 
 ## 1. Health Snapshot
-**On track: 0 | At risk: 5 | Blocked: 5 | Total: 10**
+**On Track: 0 | At Risk: 5 | Blocked: 5 | Total: 10**
 
-Zero tickets are healthy this week. Half are already blocked.
+Zero tickets are on track this week. Half the program is blocked outright.
 
 ---
 
-## 2. Cross-Source Patterns (act on these first)
+## 2. Cross-Source Patterns (Act on These First)
 
-**🔴 Pattern 1 — CCPA initiative failing across all channels**
-Tickets: `HND-146` (Web), `HND-146b` (Mobile), `HND-146c` (Dealer)
-All three trace to the same root: Legal's copy finalization + individual blockers (release train lock, BrightPath silence). None has finished implementation and the deadline is **today (10/31)**.
-**Action:** Treat as one compliance miss, not three tickets. Escalate jointly to Legal/BrightPath leadership today; prepare a unified remediation/communication plan.
+### 🔴 Pattern 1: BrightPath is the confirmed root cause blocking dealer CCPA rollout
+**Tickets:** HND-146c, HND-520
+Dealer Systems is blocked waiting on BrightPath's release calendar confirmation. BrightPath's own report confirms why: they've been fully consumed since Monday by an escalated Honda firmware defect, with **no ETA** to return to this work.
+**Action:** Escalate to BrightPath leadership (not the working contact) for a firm commitment date, today. In parallel, draft a fallback plan for dealer-facing CCPA compliance in case BrightPath doesn't resurface in time.
 
-**🔴 Pattern 2 — Dealer Systems block explained by BrightPath's own status**
-Tickets: `HND-146c`, `HND-520`
-Dealer Systems is waiting on BrightPath's release calendar. BrightPath's own report shows they're fully consumed by an escalated Honda firmware defect with **no ETA** to return to this work.
-**Action:** Waiting will not resolve this. Escalate directly to BrightPath account management now — don't let Dealer Systems keep "hoping" for a response.
+### 🔴 Pattern 2: Legal Ops delay is now blocking a second overdue deliverable
+**Tickets:** HND-89, HND-88
+CDP (HND-88) has been blocked past its Oct 25 due date waiting on Legal to confirm the consent taxonomy. Legal Ops (HND-89), who owns that taxonomy review, says it's slipped to next week because they got pulled onto CCPA copy work and an unplanned DSAR audit.
+**Action:** Tell Legal Ops explicitly that their taxonomy review is now blocking two teams, not one. Prioritize it above the DSAR audit or add support — this is compounding.
 
-**🟠 Pattern 3 — Two teams blocked on the same Legal bottleneck**
-Tickets: `HND-89`, `HND-88`
-Data Privacy & Legal Ops and CDP Team are both stalled waiting on Legal to confirm the consent taxonomy; Legal itself is fragmented across CCPA copy + DSAR audit.
-**Action:** Consolidate into one prioritized ask to Legal leadership instead of two teams independently chasing the same source.
+### 🟡 Pattern 3: All three CCPA website tickets trace to one late Legal handoff
+**Tickets:** HND-146, HND-146b, HND-146c
+Web Platform, Mobile, and Dealer Systems each independently report "no buffer" situations, all stemming from Legal finalizing/distributing CCPA copy in the days immediately before the Oct 31 deadline.
+**Action:** Treat these three as one incident, not three separate misses. Fix the root cause — push Legal to finalize regulatory copy earlier in future cycles — or this recurs every quarter.
 
-**🟠 Pattern 4 — Program-wide competing-objectives problem**
-Tickets: `HND-89`, `HND-95`, `HND-520`, `HND-611`
-Four unrelated teams (Legal Ops, Marketing, BrightPath, IAM) all report unplanned emergencies/executive priorities displacing committed work this week.
-**Action:** This is systemic, not incidental. Raise with portfolio governance — teams have no slack and this is recurring weekly.
+### 🟡 Pattern 4: Program-wide "emergency work" has no governance
+**Tickets:** HND-89, HND-95, HND-520, HND-611
+Four unrelated teams (Legal Ops, Marketing, BrightPath, Enterprise IAM) all report the same failure mode this week: unplanned "urgent" work (DSAR audit, CMO campaign, firmware defect, partner incident) silently displaced committed deliverables.
+**Action:** Raise this to leadership as a systemic issue, not four isolated incidents. There's no triage/escalation path for unplanned work before it eats committed deadlines. Push for one.
 
-**🟡 Pattern 5 — Legal Ops is a single point of strain**
-Tickets: `HND-146`, `HND-89`
-Legal Ops is both the source of CCPA copy and separately reports being pulled onto that same work plus a DSAR audit, sliding their own taxonomy review.
-**Action:** Confirm whether Legal Ops has headcount to cover CCPA + DSAR + taxonomy concurrently, or formally reprioritize one this week.
-
-**🟡 Pattern 6 — Acme vendor capacity risk ahead of cutover**
-Tickets: `HND-310`, `HND-311`
-Rehearsal has slipped twice (staffing shortage) and security review has gone fully unanswered — likely the same underlying vendor staffing problem.
-**Action:** Escalate to Acme account management now, before the 11/7 cutover — this reads as broader vendor capacity risk.
+### 🟡 Pattern 5: Enterprise IAM has zero buffer left
+**Tickets:** HND-611
+Two people were pulled off SSO cert work for an emergency incident; the deploy is "should still happen" with no room for error, and the due date already passed (Oct 24).
+**Action:** Confirm backup support is staffed before tomorrow's SSO deploy — don't rely on the team's optimistic framing.
 
 ---
 
 ## 3. Ticket Detail by Team
 
 ### Web Platform Team
-**HND-146** — CCPA Regulatory Website Updates - October | Due: **2025-10-31**
-- AI: **Blocked** (bottlenecked) — Implementation only "starting this week" but due date is today; no time left to complete/validate multiple sites.
-- Reason: Relied on Legal's copy finalization before starting; now at deadline with work incomplete.
-- Self-reported: **Medium** ⚠️ **Gap** — team rates Medium risk despite AI assessing full block; self-report understates the time crunch.
+**HND-146** — CCPA Regulatory Website Updates - October | Due: 2025-10-31
+- **AI: Blocked** (bottlenecked) — Report date is the due date itself, but updates are only "starting this week" after Legal just finalized copy. No realistic path to complete and validate multiple sites today.
+- **Self-reported: Medium** ⚠️ **Gap:** Team rates this Medium while AI classifies it as an already-missed deadline (Blocked). The team may not have registered that today is the hard deadline.
 
 ### Mobile App Engineering
-**HND-146b** — CCPA Regulatory Website Updates - October | Due: **2025-10-31**
-- AI: **At Risk** (bottlenecked) — Release train locked through 10/25 delayed start; targeting 10/30 implementation with zero buffer before deadline.
-- Reason: Single-day implementation window on the due date itself; any slippage causes a miss.
-- Self-reported: **High** — aligned with AI's urgency, no gap.
+**HND-146b** — CCPA Regulatory Website Updates - October | Due: 2025-10-31
+- **AI: At Risk** (bottlenecked) — Release train locked until 10/25; implementation only targeted to start ~10/30, leaving no buffer before today's deadline.
+- **Self-reported: High** ⚠️ **Gap (reverse):** Team rates this more severely (High) than AI's At Risk classification. Worth confirming status directly — team may have information suggesting this has already tipped into blocked/missed territory.
 
 ### Dealer Systems Integration
-**HND-146c** — CCPA Regulatory Website Updates - October | Due: **2025-10-31**
-- AI: **Blocked** (bottlenecked) — Waiting on BrightPath's release calendar since the 15th; over two weeks of silence, no forward movement.
-- Reason: External dependency stalled with no indication BrightPath is engaged; "still make the date" is unrealistic.
-- Self-reported: **Medium** ⚠️ **Gap** — team is more optimistic than AI given zero progress on this dependency; see Pattern 2 (BrightPath is deprioritizing this entirely).
+**HND-146c** — CCPA Regulatory Website Updates - October | Due: 2025-10-31
+- **AI: Blocked** (bottlenecked) — Waiting on BrightPath's release calendar confirmation since a follow-up on the 15th, with no response. Today is the due date with no path forward.
+- **Self-reported: Medium** ⚠️ **Gap:** Team rates Medium, assuming BrightPath responds "soon." AI classifies as fully Blocked given the elapsed silence. See Pattern 1 — BrightPath's own report confirms there's no ETA.
 
 ### Data Privacy & Legal Ops
-**HND-89** — Consent Taxonomy Review | Due: **2025-10-31**
-- AI: **At Risk** (competing_objectives) — Team pulled onto CCPA copy work + unplanned DSAR audit; review sliding to next week, but due date is today.
-- Reason: Self-reported "Low" risk cites buffer that doesn't exist since due date has arrived.
-- Self-reported: **Low** ⚠️ **Gap** — significant understatement; AI flags real deadline threat.
+**HND-89** — Consent Taxonomy Review | Due: 2025-10-31
+- **AI: At Risk** (competing_objectives) — Due today, but work has slipped to next week due to CCPA copy work and an unplanned DSAR audit.
+- **Self-reported: Low** ⚠️ **Gap:** Team rates Low, reasoning they have buffer until the 31st — but the 31st is today. That buffer no longer exists. See Pattern 2 — this delay is now blocking CDP's HND-88 as well.
 
-### Acme Cloud Infrastructure (Vendor)
-**HND-310** — Data Center Cloud Migration - Cutover | Due: **2025-11-07**
-- AI: **At Risk** (bottlenecked) — Rehearsal slipped twice in three weeks (staffing shortage); rescheduled to 11/3, near-zero buffer before cutover.
-- Reason: Repeated slippage pattern undermines vendor's claim that 11/7 is still achievable, with no concrete mitigation offered.
-- Self-reported: **Medium** — roughly aligned, though vendor remains optimistic on 11/7.
+### Acme Cloud Infrastructure (vendor)
+**HND-310** — Data Center Cloud Migration - Cutover | Due: 2025-11-07
+- **AI: At Risk** (bottlenecked) — Rehearsal has slipped twice in three weeks (staffing shortages), now landing just 4 days before cutover with no rehearsal buffer.
+- **Self-reported: Medium** — Consistent with AI classification, no gap.
 
-**HND-311** — Data Center Cloud Migration - Security Review | Due: **2025-10-31**
-- AI: **Blocked** (unowned_escalation) — No vendor response to two outreach attempts; due date is today with no progress possible until they engage.
-- Reason: No internal escalation evident to force vendor action.
-- Self-reported: *Not provided.*
+**HND-311** — Data Center Cloud Migration - Security Review | Due: 2025-10-31
+- **AI: Blocked** (unowned_escalation) — No vendor response to two outreach attempts; due date is today with no escalation path visible.
+- **Self-reported: None provided** ⚠️ **Gap:** No self-reported risk at all despite being Blocked — flag for immediate internal escalation since no one appears to own pushing the vendor.
 
 ### Regional Marketing - NA
-**HND-95** — Competitor-Response Campaign (Unplanned) | Due: **2025-10-31**
-- AI: **At Risk** (competing_objectives) — CMO's office injected unplanned campaign; sequencing against holiday campaign not locked in as of due date.
-- Reason: Classic competing-objectives threat to timeline, though sender believes both can be delivered.
-- Self-reported: **Medium** — aligned with AI, no material gap.
+**HND-95** — Competitor-Response Campaign (Unplanned) | Due: 2025-10-31
+- **AI: At Risk** (competing_objectives) — CMO's office injected an unplanned campaign; sequencing against the holiday campaign is unresolved as of the due date.
+- **Self-reported: Medium** — Consistent with AI classification, no gap.
 
-### BrightPath QA Services (Vendor)
-**HND-520** — Dealer Portal Release Calendar | Due: **2025-10-24** (overdue by 1 week)
-- AI: **Blocked** (competing_objectives) — Team fully consumed by escalated Honda firmware defect; no ETA to return to this work.
-- Reason: Due date already passed; progress has effectively stopped due to unplanned emergency taking priority.
-- Self-reported: **High** — aligned with AI, no gap.
+### BrightPath QA Services (vendor)
+**HND-520** — Dealer Portal Release Calendar | Due: 2025-10-24 (already past)
+- **AI: Blocked** (competing_objectives) — Due date already passed. Vendor fully consumed by an escalated Honda firmware defect with no ETA to return.
+- **Self-reported: High** — Consistent with AI classification, no gap. See Pattern 1 — this directly explains HND-146c's blockage.
 
 ### Customer Data Platform (CDP) Team
-**HND-88** — Consent Signal Integration | Due: **2025-10-25** (overdue by 6 days)
-- AI: **Blocked** (bottlenecked) — No change from last week; still waiting on Legal to confirm consent taxonomy. Due date has already passed while stalled.
-- Reason: Repeat status with zero progress, external dependency unresolved.
-- Self-reported: **Medium** ⚠️ **Gap** — team frames this as "getting nervous," but AI confirms the deadline has already been missed; risk is higher than self-report suggests.
+**HND-88** — Consent Signal Integration | Due: 2025-10-25 (already past)
+- **AI: Blocked** (unowned_escalation) — Waiting on Legal for taxonomy confirmation, no change from last week, due date already passed with no escalation visible.
+- **Self-reported: Medium** ⚠️ **Gap:** Team rates Medium despite the deadline having already passed and no owner visibly pushing Legal. See Pattern 2 — root cause is HND-89's slip.
 
 ### Enterprise Identity & Access Management
-**HND-611** — Partner Integration Incident Response | Due: **2025-10-24** (overdue by 1 week)
-- AI: **At Risk** (competing_objectives) — Emergency partner integration break pulled two people off SSO cert renewal; SSO deploy tomorrow "should" still happen but zero buffer remains.
-- Reason: Due date already passed; unplanned emergency has directly superseded reported workstream.
-- Self-reported: **Medium** — aligned with AI, no material gap.
+**HND-611** — Partner Integration Incident Response | Due: 2025-10-24 (already past)
+- **AI: At Risk** (competing_objectives) — Due date passed; emergency partner incident pulled two people off SSO cert work, leaving zero buffer for tomorrow's planned deploy.
+- **Self-reported: Medium** — Consistent with AI classification, no gap, but note zero remaining margin per Pattern 5 — confirm backup support before tomorrow.
