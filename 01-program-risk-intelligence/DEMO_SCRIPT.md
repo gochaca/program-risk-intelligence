@@ -1,53 +1,73 @@
 # Demo recording script
 
-Target length: 3-4 minutes. Screen recording (QuickTime: File → New Screen Recording), terminal + browser tab open side by side or full-screen switching between them.
+Target length: 4-5 minutes. Screen recording (QuickTime: File → New Screen Recording), terminal + browser tabs (GitHub, Jira, Gmail) — switch between them as noted. This script matches the finalized slide deck's examples exactly, so the video and the slides tell one consistent story.
 
-## 1. The problem (30 sec, talking over your terminal/README)
+## 1. The problem (25 sec, talking over the README)
 
-"Every Friday I collect status updates from about 10 teams and vendors, 1-5 issues each, and turn it into a leadership report. The two hard parts: a team's own risk rating is unreliable in isolation, and the real risk often lives *between* updates, not inside one — two teams naming the same vendor as a blocker, three unrelated emergencies landing the same week. I built this to catch that automatically."
+"Every Friday I collected status updates from about 10 teams and vendors, 1-5 issues each, and turned it into a leadership report by hand. Three things made that hard: self-reported risk is unreliable in isolation, the real risk usually lives *between* updates, and priority churn buries reprioritization until it's too late. I built this to catch all three automatically."
 
-Show: `01-program-risk-intelligence/README.md` on GitHub, scrolled to "The problem" section.
+Show: `01-program-risk-intelligence/README.md` on GitHub, "The problem" section.
 
-## 2. The pipeline, live (90 sec)
+## 2. Live Moment 1 — the model overrides a self-reported "Low" (40 sec)
 
-Run in terminal, narrating each step:
+"Here's a real case from the test data. A team deprioritized a ticket for a VP-requested homepage redesign, rated their own risk 'Low' — 'not urgent, fine to slip a sprint.'"
 
+Show terminal, run:
 ```bash
 cd ~/Projects/program-risk-intelligence/01-program-risk-intelligence
-python3 classify.py
+python3 -c "
+import json
+from classify import classify_update
+d = json.load(open('data/eval_scenarios.json'))
+item = next(u for u in d['updates'] if u['update_id'] == 'EVAL-4')
+payload = {k: v for k, v in item.items() if not k.startswith('ground_truth') and k != 'purpose'}
+print('TEAM SAID:', item['self_reported_risk'], '-', item['self_reported_rationale'])
+result = classify_update(payload)
+print('AI SAID:', result['classification'], '-', result['reason'])
+"
 ```
-"This classifies each update — on track, at risk, or blocked — with a reason, and it's explicitly told not to just trust the self-reported rating." Let it run, point out the match-rate line at the end.
 
-```bash
-python3 detect_patterns.py
-```
-"This is the interesting part — it looks at the whole batch at once and finds things no single update reveals." Point out one pattern in the output, e.g. the BrightPath vendor pattern connecting two tickets.
+"The team didn't hide anything — they said plainly what happened. The model didn't dispute the facts. It disputed whether 'Low' was the right word for a due date three days out with nothing scheduled to happen before it."
 
-```bash
-python3 generate_report.py
-```
-"And this drafts both altitudes from the same data — team detail and an executive summary — with the exec version structurally stripped down, not just shortened."
+## 3. Live Moment 2 — cross-dependency detection, on a real Jira project (45 sec)
 
-## 3. The dashboard (60 sec)
+"This next one isn't test data — it's from a real Jira Cloud project I connected this tool to."
 
-Open the published dashboard artifact in browser.
-- Point at the health snapshot stat bar.
-- Click into "Executive View" — read one pattern card out loud, especially the systemic_theme one (five unrelated teams hit by competing objectives the same week).
-- Switch to "Team Detail View" — find `HND-88`/`HND-89`, point out the "AI disagrees with self-reported rating" flag — this is the exact self-report-vs-reality gap the tool exists to catch.
+Switch to browser, show the real Jira tickets `CRH-4` and `CRH-5` with the posted AI comments.
 
-## 4. Evaluation, honestly (45 sec)
+"Two tickets, two different queues, neither one mentions the other. `CRH-4` is blocked because Legal hasn't sent over CCPA copy. `CRH-5` — Legal's *own* ticket — is blocked because Legal's gone silent on two requests. Read individually, two blocked tickets. Read together —" show the cross-source pattern finding (from the exec report or re-run `detect_patterns.py` live) "— it's the same team, underwater, quietly stalling everything downstream of it. That's the whole pitch: read every update together, not one at a time."
 
-"I didn't just test it against the dataset I built the rubric with — that's circular. I built a second, adversarial set specifically to try to trip it up: anxious language over a fine rollout, calm boilerplate over a real risk, an inflated self-report over something already done." Show `data/evaluation_report.md` on GitHub.
+## 4. Two-altitude reporting (30 sec)
 
-"It got 100% on the regression set, but only 62% on the adversarial one — and that's the more honest number. The good news: all four tone-manipulation traps passed. The misses all clustered on one specific boundary — blocked versus at-risk — including one real limitation I documented rather than hid."
+Open the two-altitude comparison graphic, or run `python3 generate_report.py` live and show both output files.
 
-## 5. Close (15 sec)
+"Same classified data, same pattern, two audiences. Team-level detail keeps every ticket and the raw self-report. The executive version strips that out entirely — leadership gets the program's final call, not the source material — and promotes the cross-source patterns to the top instead of burying them under 17 individual tickets."
 
-"Whole thing's on GitHub, commit-by-commit, five milestones, [repo URL]. Built with Claude doing the classification and pattern-detection work, me doing the judgment calls on what 'risk' actually means from having done this by hand."
+## 5. Evaluation, honestly (35 sec)
+
+"I didn't just test this against the dataset I built the rubric with — that's circular. I built a second, adversarial set specifically to try to break it: anxious language over a fine rollout, calm boilerplate over a real risk, an inflated self-report over something already done, dramatic language about something already resolved."
+
+Show the evaluation scorecard graphic or `data/evaluation_report.md`.
+
+"100% on the regression set, 62% on the adversarial one — and that's the more honest number. All four tone-manipulation traps passed. The misses clustered on one specific boundary, including one real limitation I documented rather than hid."
+
+## 6. Real-world validation (40 sec)
+
+"This isn't just a demo running against fixtures. It's connected to a live Jira project and a real Gmail account."
+
+Show, in quick succession:
+- Gmail Drafts folder with `[Status request]` drafts sitting unsent — "Draft-only, on purpose. There's no code path to send anything automatically — a human reviews and sends every email this tool ever produces."
+- Terminal: `launchctl list | grep programriskintelligence` — "It's scheduled to run itself — Wednesday requests, Friday follow-ups, Friday reports — and it has a hard stop date built in. It doesn't run forever; it shuts itself off."
+
+"Building this against real systems surfaced real bugs — a state file two modes were silently sharing, a miscounted non-response stat, a malformed API response. All documented in the README, not swept under the rug, because that's the same discipline the tool itself is built to enforce."
+
+## 7. Close (20 sec)
+
+"Whole thing's on GitHub, commit by commit, six milestones, real Jira, real Gmail, real bugs found and fixed in the open — [repo URL]. Claude did the classification and pattern-detection reasoning. I did the judgment calls on what 'risk' actually means, from having done this by hand."
 
 ---
 
 ## Once recorded
 
 1. Upload wherever you're hosting it (Loom / YouTube unlisted / repo-attached video).
-2. Send me the link and I'll drop it into the README's Demo section and do the final commit + push to close out Milestone 5.
+2. Send me the link and I'll drop it into the README's Demo section, the one-pager, and the follow-up email, and do the final commit + push.
