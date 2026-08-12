@@ -19,7 +19,7 @@ Show: `01-program-risk-intelligence/README.md` on GitHub, "The problem" section.
 
 **Tools:** Terminal — Python (`classify.py`, run live via inline `python3 -c`).
 
-"Here's a real case from the test data. A team de-prioritized a ticket for a VP-requested homepage redesign, rated their own risk 'Low' — 'not urgent, fine to slip a sprint.'"
+"Here's a real case from the test data. Here, the team de-prioritized a ticket for a VP-requested homepage redesign, rated their own risk 'Low' — 'not urgent, fine to slip a sprint.'"
 
 Show terminal, run:
 ```bash
@@ -35,7 +35,7 @@ result = classify_update(payload)
 print('AI SAID:', result['classification'], '-', result['reason'])
 "
 ```
-
+Transition ## Now I would like to show you, in real-time, how the model uses facts to provide an updated rating based on analysis. 
 "The team was transparent and the model didn't dispute the facts. It disputed whether 'Low' was the right word for a due date three days out with nothing scheduled to happen before it."
 
 ## 3. Live Moment 2 — cross-dependency detection, on a real Jira project (45 sec)
