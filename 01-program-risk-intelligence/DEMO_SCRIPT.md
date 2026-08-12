@@ -15,7 +15,7 @@ Show: `01-program-risk-intelligence/README.md` on GitHub, "The problem" section.
 
 ## 2. Live Moment 1 — the model overrides a self-reported "Low" (40 sec)
 
-"Here's a real case from the test data. A team deprioritized a ticket for a VP-requested homepage redesign, rated their own risk 'Low' — 'not urgent, fine to slip a sprint.'"
+"Here's a real case from the test data. A team de-prioritized a ticket for a VP-requested homepage redesign, rated their own risk 'Low' — 'not urgent, fine to slip a sprint.'"
 
 Show terminal, run:
 ```bash
@@ -32,7 +32,7 @@ print('AI SAID:', result['classification'], '-', result['reason'])
 "
 ```
 
-"The team didn't hide anything — they said plainly what happened. The model didn't dispute the facts. It disputed whether 'Low' was the right word for a due date three days out with nothing scheduled to happen before it."
+"The team was transparent and the model didn't dispute the facts. It disputed whether 'Low' was the right word for a due date three days out with nothing scheduled to happen before it."
 
 ## 3. Live Moment 2 — cross-dependency detection, on a real Jira project (45 sec)
 
@@ -40,7 +40,9 @@ print('AI SAID:', result['classification'], '-', result['reason'])
 
 Switch to browser, show the real Jira tickets `CRH-4`, `CRH-5`, and `CRH-9` with the posted AI comments.
 
-"Three tickets, three different teams, none of them mention each other. `CRH-9`'s vendor has gone silent on two requests. `CRH-5` — Legal's own ticket — is actually *done*, just stuck waiting on a VP's sign-off, and she's traveling until Monday, after the due date. `CRH-4` is blocked because Legal hasn't delivered CCPA copy, flagged urgent, but nobody's actually chasing it. Read individually, three separate blocked tickets. Read together —" show the cross-source pattern finding (from the exec report or re-run `detect_patterns.py` live) "— they're all the same failure: work is stalled on an approval or a response, and nobody owns pushing it forward. That's the whole pitch: read every update together, not one at a time."
+"Three tickets, three different teams, none of them mention each other. `CRH-9`'s vendor has gone silent for two weeks. `CRH-5` — Legal's own ticket — is actually *done*, just stuck waiting on a VP's sign-off, and she's traveling until Monday, after the due date. `CRH-4` is blocked because Legal hasn't delivered CCPA copy, flagged urgent, but nobody's actually chasing it. Read individually, three separate blocked tickets. 
+
+Read together —" show the cross-source pattern finding (from the exec report or re-run `detect_patterns.py` live) "— they're all the same failure: work is stalled on an approval or a response, and nobody owns pushing it forward. That's the whole pitch: read every update together, not one at a time."
 
 ## 4. Two-altitude reporting (30 sec)
 
