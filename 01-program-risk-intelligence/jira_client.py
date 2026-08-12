@@ -129,6 +129,35 @@ class RealJiraClient:
         )
         resp.raise_for_status()
 
+    def create_issue(
+        self,
+        project_key: str,
+        summary: str,
+        issue_type: str = "Task",
+        labels: list[str] | None = None,
+        due_date: str | None = None,
+        assignee_account_id: str | None = None,
+    ) -> str:
+        """Creates an issue, returns its key (e.g. 'CRH-12')."""
+        fields = {
+            "project": {"key": project_key},
+            "summary": summary,
+            "issuetype": {"name": issue_type},
+        }
+        if labels:
+            fields["labels"] = labels
+        if due_date:
+            fields["duedate"] = due_date
+        if assignee_account_id:
+            fields["assignee"] = {"id": assignee_account_id}
+        resp = self._requests.post(
+            f"{self.base_url}/rest/api/3/issue",
+            auth=self.auth,
+            json={"fields": fields},
+        )
+        resp.raise_for_status()
+        return resp.json()["key"]
+
 
 def get_jira_client():
     """Real client if JIRA_BASE_URL is configured, mock otherwise."""

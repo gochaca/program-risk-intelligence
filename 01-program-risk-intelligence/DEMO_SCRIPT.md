@@ -19,7 +19,7 @@ Show: `01-program-risk-intelligence/README.md` on GitHub, "The problem" section.
 
 **Tools:** Terminal — Python (`classify.py`, run live via inline `python3 -c`).
 
-"Here's a real case from the test data. Here, the team de-prioritized a ticket for a VP-requested homepage redesign, rated their own risk 'Low' — 'not urgent, fine to slip a sprint.'"
+"Here's a real case, pulled straight from this week's actual Jira project and the real reply that came in for it. A team said their integration was 'Low' risk — work's proceeding smoothly, and the downstream team even agreed to push the deadline out. Nobody mentioned that the original due date had already come and gone."
 
 Show terminal, run:
 ```bash
@@ -27,16 +27,17 @@ cd ~/Projects/program-risk-intelligence/01-program-risk-intelligence
 python3 -c "
 import json
 from classify import classify_update
-d = json.load(open('data/eval_scenarios.json'))
-item = next(u for u in d['updates'] if u['update_id'] == 'EVAL-4')
-payload = {k: v for k, v in item.items() if not k.startswith('ground_truth') and k != 'purpose'}
-print('TEAM SAID:', item['self_reported_risk'], '-', item['self_reported_rationale'])
+d = json.load(open('data/live_classified_updates.json'))
+item = next(u for u in d['updates'] if u['jira_ticket'] == 'CRH-10')
+payload = {k: v for k, v in item.items() if k not in ('raw_reply', 'ai_classification', 'ai_signal', 'ai_reason')}
+print('TEAM SAID:', item['self_reported_risk'], '-', item['update_text'])
 result = classify_update(payload)
 print('AI SAID:', result['classification'], '-', result['reason'])
 "
 ```
-Transition ## Now I would like to show you, in real-time, how the model uses facts to provide an updated rating based on analysis. 
-"The team was transparent and the model didn't dispute the facts. It disputed whether 'Low' was the right word for a due date three days out with nothing scheduled to happen before it."
+"The team wasn't wrong about anything they said — the work's progressing, and the extension is coordinated. But 'Low' quietly folded a missed deadline into just another status update. The model doesn't dispute the facts. It disputes calling an already-slipped commitment 'Low.'"
+
+Transition: "Now I'd like to show you, in real time, how the model uses facts to arrive at an updated rating — this time, across more than one ticket."
 
 ## 3. Demonstration 2 — cross-dependency detection, on a real Jira project (45 sec)
 
