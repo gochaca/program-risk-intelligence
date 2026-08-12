@@ -271,6 +271,12 @@ The raw reply is carried as a separate `raw_reply` field, deliberately kept out 
 
 Validating this against the real Jira project surfaced one more real bug, in the same family as the earlier `simulate`-touched-a-real-account incident: `simulate` mode and the live phases were sharing a single `cycle_state.json`. Running `simulate` (as part of testing this feature) silently overwrote the real `sent_at`/`awaiting_response` with the mock fixture's values, so the next real `report` run searched from the wrong date and reported `CRH-2` as a non-response even though the reply genuinely existed. Fixed by giving `simulate` its own `cycle_state.simulate.json`, entirely separate from the live state file — there's no longer a shared file for one mode to corrupt for the other. Re-validated afterward: the real Jira comment above (`ON_TRACK`, quoting the real reply) is from that corrected run.
 
+### A malformed API response `detect_patterns.py` hadn't seen before
+
+`detect_patterns.py` already had a retry for one failure shape — forced tool-use occasionally returning a response missing the `patterns` key entirely (see "Cross-source pattern detection" above). Testing against real authored content for the first time (feeding several real replies through the pipeline together) turned up a *different* malformed shape: `patterns` present, but its items were plain strings instead of pattern objects, crashing the post-processing loop with a `TypeError` the existing retry never checked for.
+
+Fixed by validating the actual shape of the response — `patterns` must be a list of dicts, not just present — and retrying on either failure mode, not just the missing-key one. A reminder that "add a retry" isn't the same as "handle the failure class"; the second attempt needed to check for the right thing, not just try again and hope.
+
 ### Scheduling
 
 [`launchd/`](./launchd/) has three macOS launchd agent definitions, one per phase, following the cadence set earlier: first-request Wednesday 9am, followup Friday 8am, report Friday 3pm (leaving hours for Friday-morning follow-up replies to land before the report generates). launchd rather than cron, since it's the native, more reliable scheduler on macOS.
