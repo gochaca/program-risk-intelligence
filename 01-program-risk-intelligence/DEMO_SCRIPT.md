@@ -54,6 +54,9 @@ Read together —" show the cross-source pattern finding (from the exec report o
 
 **Tools:** Browser (the two-altitude comparison graphic) — or Terminal + text editor if you'd rather run `generate_report.py` live and show the two output files directly.
 
+cd ~/Projects/program-risk-intelligence/01-program-risk-intelligence
+python3 detect_patterns.py
+
 Open the two-altitude comparison graphic, or run `python3 generate_report.py` live and show both output files.
 
 "Same classified data, same pattern, two audiences. Team-level detail keeps every ticket and the raw self-report. The executive version strips that out entirely — leadership gets the program's final call, not the source material — and promotes the cross-source patterns to the top instead of burying them under 17 individual tickets."
