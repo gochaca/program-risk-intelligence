@@ -15,7 +15,7 @@ I built this tool to catch all three automatically."
 
 Show: `01-program-risk-intelligence/README.md` on GitHub, "The problem" section.
 
-## 2. Live Moment 1 — the model overrides a self-reported "Low" (40 sec)
+## 2. Demonstration 1 — the model overrides a self-reported "Low" (40 sec)
 
 **Tools:** Terminal — Python (`classify.py`, run live via inline `python3 -c`).
 
@@ -38,7 +38,7 @@ print('AI SAID:', result['classification'], '-', result['reason'])
 Transition ## Now I would like to show you, in real-time, how the model uses facts to provide an updated rating based on analysis. 
 "The team was transparent and the model didn't dispute the facts. It disputed whether 'Low' was the right word for a due date three days out with nothing scheduled to happen before it."
 
-## 3. Live Moment 2 — cross-dependency detection, on a real Jira project (45 sec)
+## 3. Demonstration 2 — cross-dependency detection, on a real Jira project (45 sec)
 
 **Tools:** Browser — Jira Cloud (real tickets `CRH-4`, `CRH-5`, `CRH-9`, with the posted AI comments).
 
@@ -85,7 +85,7 @@ Show, in quick succession:
 
 ## 7. Close (20 sec)
 
-**Tools:** GitHub (repo/commit history on screen as backdrop) — no specific action, just the spoken close.
+**Tools:** GitHub thank you slide. no specific action, just the spoken close.
 
 "Whole thing's on GitHub, commit by commit, six milestones, real Jira, real Gmail, real bugs found and fixed in the open — [repo URL]. Claude did the classification and pattern-detection reasoning. I did the judgment calls on what 'risk' actually means, from having done this by hand."
 
