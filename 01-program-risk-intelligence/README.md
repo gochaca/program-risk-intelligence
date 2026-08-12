@@ -5,8 +5,10 @@
 My custom designed and built tool that sends update requests and ingests updates from multiple teams (internal and external), classifies risk with a stated reason, flags patterns across teams, and auto-drafts an analysis in a weekly status report and executive summary [Program Risk and Vendor Coordination Intelligence Weekly Status](https://claude.ai/code/artifact/4ce4c387-19b0-4474-aa89-f1066131bba4)
 
 ## The problem
-
-Every week, I would have to track down status updates for more than team teams. Internal teams do not respond, external teams are traveling and won't be back until Monday, all while we have a dozen active issues requiring updates. It was frustrating, tedious and most importantly, unreliable. Once the updates were received, I would get the status updates I could, and update Jira: 
+Every week, I would collect status updates for 10-15 teams, internal and external each with multiple competing projects. I would use this to create reports for leadership. I had three weekly challenges to overcome. 
+1. Self-reported risk is isolated of other projects and therefore unreliable
+2. The real risk tends to live *between* the updates
+3. Priority changes caused confusion and missed deadlines.
 
 | Field | Example |
 |---|---|
@@ -19,23 +21,28 @@ Every week, I would have to track down status updates for more than team teams. 
 
 Two things make this hard to do well by hand, every week, at scale:
 
-1. **Self-reported risk is unreliable in isolation.** A team can honestly rate its own risk "Low" while it is quietly blocking someone else's "High." A due date "tomorrow" with an unresolved dependency reads very differently than the same words with three weeks of runway — but the dropdown doesn't capture that.
-2. **The real risk often lives *between* updates, not inside one.** Two teams independently naming the same vendor as a blocker, or three separate emergencies all landing on the same team in the same week, is invisible if you only ever read updates one at a time.
-3. **Emergencies constantly reorder priorities.** Urgent, unplanned work routinely supersedes what was previously "on track," and that reprioritization needs to surface immediately, not get buried until next Friday.
+1. **Self-reported risk is unreliable in isolation.** A team can rate its own risk "Low" while quietly blocking someone else's "High." A due date of "tomorrow" with an unresolved dependency reads very differently than another teams with three weeks of runway. "Low" fails to capture this. 
+2. **The real risk often lives *between* updates, not inside one.** Two teams independently naming the same vendor as a blocker, or three separate emergencies all landing on the same team in the same week.  They are invisible if you read updates one at a time.
+3. **Emergencies constantly reorder priorities.** Urgent, unplanned work routinely supersedes what was previously "on track," That re-prioritization needs to surface immediately, not get buried until next Friday.
 
-This tool is built to catch what I caught by manually cross-referencing 30-50 updates a week — earlier, and more consistently.
+I built this tool to catch what I caught by manually cross-referencing 30-50 updates a week. Providing updates earlier, more consistent for team and executive reporting.
 
 ## What "at risk" means here
 
-Risk classification here is not just the team's self-reported Low/Medium/High. Each update is classified into one of three states, with a **reason code** drawn from four signal types — the same signals I actually watch for when reading these updates:
+Risk classification is not here to dispute the team's self-reported Low/Medium/High. Each update is classified into one of three states, with a **reason code** drawn from four signal types — the same signals I actually watch for when reading these updates:
+Signal Types
+1 **Quiet/Unresponsive**: A work-stream goes quiet or repeats last weeks status. Silence is a signal to be seen and understood. 
+2. **Bottle-necked/Not Prioritized**: work is stalled behind a dependency, review, or decision that isn't moving. 
+3. **Competing Objectives**: An unplanned item (emergency, executive ask etc.) has superseded the planned work. 
+4. **Unowned escalation**: A real risk has been raised but no leader or decision-maker has owned the risk. 
 
 ### Classification states
 
 | State | Meaning |
 |---|---|
-| **On Track** | No credible threat to the due date. Any risk mentioned is proactively managed with a clear plan and doesn't require escalation. |
-| **At Risk** | One or more signals below are present and could threaten the due date without intervention, but the workstream is still moving. |
-| **Blocked** | Progress has actually stopped — waiting on a person, team, vendor, or decision outside the reporting team's control, with no forward movement possible until it's resolved. |
+:green_circle:| **On Track** | No credible threat to the due date. Any risk mentioned is proactively managed. No escalation required |
+:yellow_circle:| **At Risk** | One or more signals below are present and could threaten the due date without intervention, but the work-stream is still moving. | 
+:red_circle:| **Blocked** | Progress has stopped — waiting on a person, team, vendor, or decision outside the reporting team's control, with no forward movement possible until it's resolved. |
 
 ### Signal types (the "why")
 
