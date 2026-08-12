@@ -7,7 +7,7 @@ Target length: 4-5 minutes. Screen recording (QuickTime: File → New Screen Rec
 "Every week, I would collect status updates for 10-15 teams, each with multiple in flight projects. I would use this to create reports for leadership. I had three weekly challenges to overcome. 
 1. reported risk was isolated of other projects and therefor unreliable
 2. The real risk tends to live *between* the updates
-3. Priority churn and re-prioritization caused confusion and missed deadlines.
+3. Priority churn and re-prioritization caused confusion and missed deadlines."
 
 I built this tool to catch all three automatically."
 
