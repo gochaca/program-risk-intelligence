@@ -4,7 +4,12 @@ Target length: 4-5 minutes. Screen recording (QuickTime: File → New Screen Rec
 
 ## 1. The problem (25 sec, talking over the README)
 
-"Every Friday I collected status updates from about 10 teams and vendors, 1-5 issues each, and turned it into a leadership report by hand. Three things made that hard: self-reported risk is unreliable in isolation, the real risk usually lives *between* updates, and priority churn buries reprioritization until it's too late. I built this to catch all three automatically."
+"Every week, I would collect status updates for 10-15 teams, each with multiple in flight projects. I would use this to create reports for leadership. I had three weekly challenges to overcome. 
+1. reported risk was isolated of other projects and therefor unreliable
+2. The real risk tends to live *between* the updates
+3. Priority churn and re-prioritization caused confusion and missed deadlines.
+
+I built this tool to catch all three automatically."
 
 Show: `01-program-risk-intelligence/README.md` on GitHub, "The problem" section.
 
