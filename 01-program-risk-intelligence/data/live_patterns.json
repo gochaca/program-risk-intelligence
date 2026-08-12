@@ -3,57 +3,31 @@
     {
       "pattern_type": "shared_dependency",
       "tickets_involved": [
-        "HND-146c",
-        "HND-520"
+        "CRH-4",
+        "CRH-2",
+        "CRH-3"
       ],
-      "description": "Dealer Systems (HND-146c) is blocked waiting on BrightPath to confirm the release calendar for CCPA copy, and BrightPath's own update (HND-520) confirms exactly why: they've been fully consumed since Monday by an escalated Honda firmware defect and have given no ETA to return to the dealer portal release calendar. This is the same root cause surfacing from both sides of the relationship.",
-      "why_it_matters": "This isn't a generic vendor delay -- it's a named, confirmed root cause with no ETA. The program lead should escalate directly to BrightPath leadership (not just the working-level contact) to get a firm commitment date, and in parallel prepare a fallback plan for dealer-facing CCPA compliance in case BrightPath doesn't resurface in time."
-    },
-    {
-      "pattern_type": "dependency_chain",
-      "tickets_involved": [
-        "HND-89",
-        "HND-88"
-      ],
-      "description": "CDP Team (HND-88) has been blocked past its Oct 25 due date waiting on Legal to confirm the consent taxonomy. Data Privacy & Legal Ops (HND-89), who owns that taxonomy review, reports it has slipped to next week because they were pulled onto CCPA copy work and an unplanned DSAR audit. The blocker named in HND-88 is directly explained by the delay in HND-89.",
-      "why_it_matters": "CDP's blocker won't resolve on its own -- Legal Ops needs to be told their taxonomy review is now blocking a second overdue deliverable, not just their own. Program lead should prioritize the taxonomy review above the DSAR audit or bring in extra help, since two teams are now stalled on it."
-    },
-    {
-      "pattern_type": "shared_dependency",
-      "tickets_involved": [
-        "HND-146",
-        "HND-146b",
-        "HND-146c"
-      ],
-      "description": "All three CCPA website update tickets (Web Platform, Mobile, Dealer Systems) trace their compressed or missed timelines back to the same upstream event: Legal only finalized and distributed the CCPA copy in the days immediately before the Oct 31 deadline (with Mobile noting delivery on the 22nd and additional release-train lock time eating into their window). Each team independently describes a 'no buffer' situation stemming from the same late Legal handoff.",
-      "why_it_matters": "This is a single-source failure (Legal's copy finalization timing) manifesting as three separate 'blocked/at_risk' tickets. Rather than managing each site team individually, the program lead should address the root cause -- push Legal to finalize regulatory copy earlier in future cycles -- and treat this week's three tickets as one incident for reporting purposes, since fixing one team's downstream execution won't prevent recurrence."
-    },
-    {
-      "pattern_type": "team_overload",
-      "tickets_involved": [
-        "HND-89"
-      ],
-      "description": "Data Privacy & Legal Ops was pulled onto both CCPA copy work and an unplanned DSAR audit request in the same week that their own consent taxonomy review (HND-89) was due, causing it to slip. This single team absorbed two competing asks simultaneously while carrying a due deliverable.",
-      "why_it_matters": "Flag this team for capacity relief -- if another unplanned request lands next week, both the taxonomy review and any new ask will slip further. Note: strengthened as a cross-team pattern given HND-88 depends on this same team's output being late (see dependency_chain)."
+      "description": "All three CCPA Regulatory Website Updates workstreams (Dealer Systems, Web Platform, Mobile) depend on the same legal team deliverable: the CCPA copy. Mobile and Web Platform have already completed their implementation work, but Dealer Systems is explicitly blocked because legal has not yet provided the required copy, and it's unclear if Web Platform's 'copy implemented' means it received different/partial copy or is now stale pending legal finalization.",
+      "why_it_matters": "The program lead should escalate directly to the legal team this week to unblock CRH-4 before the Aug 14 due date, and confirm with Web Platform (CRH-2) whether the copy they implemented is the final legal-approved version, since a single legal bottleneck is now the critical path for the entire CCPA initiative despite two of three teams reporting on_track."
     },
     {
       "pattern_type": "systemic_theme",
       "tickets_involved": [
-        "HND-89",
-        "HND-95",
-        "HND-520",
-        "HND-611"
+        "CRH-9",
+        "CRH-5",
+        "CRH-4"
       ],
-      "description": "Four unrelated tickets across four different teams/vendors (Data Privacy & Legal Ops, Regional Marketing, BrightPath QA, Enterprise IAM) all cite the same signal: unplanned, higher-priority work (DSAR audit, CMO competitor campaign, escalated firmware defect, partner integration incident) displacing previously committed deliverables in the same week.",
-      "why_it_matters": "This is a program-wide capacity/prioritization problem, not isolated bad luck. The program lead should raise this pattern to leadership as evidence that intake of 'emergency' work has no governance -- teams have no mechanism to push back or get relief, and planned commitments are silently absorbing the cost. Consider instituting a lightweight triage/escalation path for unplanned work before it silently displaces committed deliverables."
+      "description": "Three separate tickets across different teams and initiatives (Dealer Portal Release Calendar, Consent Taxonomy Review, CCPA Dealer Systems) are all blocked due to unowned_escalation signals -- unanswered requests, a traveling VP with no delegate for sign-off, and legal not delivering copy with no one driving urgency. In each case, no one is actively pushing the blocking party to respond.",
+      "why_it_matters": "This is a pattern of stalled decisions/approvals with no escalation ownership across multiple unrelated teams. The program lead should establish an explicit escalation path (e.g., designate approval delegates for traveling execs, set SLAs for legal/vendor responses) rather than treating each as an isolated one-off blocker."
     },
     {
-      "pattern_type": "team_overload",
+      "pattern_type": "dependency_chain",
       "tickets_involved": [
-        "HND-611"
+        "CRH-10",
+        "CRH-11"
       ],
-      "description": "Enterprise IAM had two people pulled off SSO cert renewal work to handle an emergency partner integration incident, leaving zero buffer on the SSO deploy timeline. This is a single team absorbing an unplanned incident directly against a planned, already-overdue deliverable.",
-      "why_it_matters": "With zero buffer remaining, any additional issue tomorrow will cause a second miss on top of the already-passed Oct 24 due date. Program lead should confirm additional support is available before tomorrow's SSO deploy rather than relying on the team's optimistic 'should still happen' framing."
+      "description": "Both CRH-10 (Consent Signal Integration) and CRH-11 (Partner Integration Incident Response) involve inter-team dependencies where one side had to wait on another to respond (Signal team agreeing to a new date; partner providing details) before work could proceed, both resulting in due date slips within days of each other (Aug 14-15).",
+      "why_it_matters": "While each is individually manageable, the clustering of slipped due dates tied to external/partner response times suggests the program lead should review whether response-time SLAs with partners and cross-team signal dependencies need tightening to avoid a pattern of recurring date slips."
     }
   ]
 }

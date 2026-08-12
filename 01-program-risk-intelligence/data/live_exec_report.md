@@ -1,27 +1,22 @@
-# Executive Summary — Weekly Program Status
+# Program Status Report — Executive Summary
 
-## Health Snapshot
-**On track: 0 | At risk: 5 | Blocked: 5 | Total: 10**
+## 1. Health Snapshot
+**On track: 6 | At risk: 1 | Blocked: 3 | Total: 10**
 
-## Cross-Source Patterns (Portfolio-Level Issues)
+## 2. Cross-Source Patterns
 
-**⚠️ Systemic Theme: Unplanned work is silently displacing committed deliverables.**
-Four separate teams/vendors (Data Privacy & Legal Ops, Regional Marketing, BrightPath QA, Enterprise IAM) each missed or jeopardized a commitment this week because higher-priority "emergency" work (DSAR audit, CMO campaign, firmware defect, partner incident) got inserted with no governance. This is a program-wide capacity/prioritization gap, not isolated bad luck.
-**Action:** Leadership should establish a lightweight triage/escalation path for unplanned work so it doesn't silently absorb committed deliverables going forward.
+**⚠️ Systemic theme: Stalled decisions with no one driving escalation**
+Three unrelated tickets (CRH-9, CRH-5, CRH-4) are all blocked for the same underlying reason — a request, sign-off, or deliverable is stuck with another party, and no one is actively pushing for a response. This isn't three isolated problems; it's a pattern of missing escalation ownership across teams.
+**Action:** Establish a clear escalation path program-wide — e.g., require approval delegates when execs travel, and set response SLAs for legal/vendor/partner requests — rather than resolving each case one-off.
 
-**CCPA copy handoff caused three downstream misses.** Web Platform, Mobile, and Dealer Systems (HND-146, 146b, 146c) all trace their compressed/missed timelines to Legal finalizing CCPA copy only days before the Oct 31 deadline.
-**Action:** Treat as one incident, not three; push Legal to finalize regulatory copy earlier in future cycles.
+**🔗 Shared dependency: CCPA copy from legal blocking Dealer Systems**
+CRH-4, CRH-2, and CRH-3 all depend on the same legal deliverable (CCPA copy). Dealer Systems (CRH-4) is blocked without it, due in 2 days. Web Platform and Mobile report their implementation done, but it's unclear if Web Platform's copy is final/legal-approved or now stale.
+**Action:** Program lead to escalate directly to legal this week to unblock CRH-4, and confirm with Web Platform whether their implemented copy is the final approved version.
 
-**BrightPath vendor blocker confirmed from both sides.** Dealer Systems (HND-146c) is blocked waiting on BrightPath (HND-520), who confirm they're fully consumed by an escalated Honda firmware defect with no ETA.
-**Action:** Escalate directly to BrightPath leadership for a firm date; prepare a fallback plan for dealer-facing CCPA compliance.
+**🔗 Dependency chain: Slipping dates tied to partner/cross-team response times**
+CRH-10 and CRH-11 both slipped their due dates (Aug 14–15) while waiting on another team or partner to respond before work could proceed.
+**Action:** Review whether partner/cross-team response-time SLAs need tightening to prevent recurring slippage.
 
-**Legal Ops delay now blocking two deliverables.** Legal Ops' slipped taxonomy review (HND-89) is the direct cause of CDP's stalled work (HND-88), which is already past due.
-**Action:** Prioritize the taxonomy review above the DSAR audit, or add support — two teams are now stalled on it.
+## 3. Remaining Items Needing Attention
 
-**Enterprise IAM has zero buffer left.** Two staff were pulled to an emergency partner incident, leaving no slack on the already-overdue SSO cert renewal (HND-611).
-**Action:** Confirm additional support is available before tomorrow's deploy rather than relying on optimistic framing.
-
-## Remaining At-Risk Items Needing Attention
-
-- **HND-310 (Acme Cloud Infrastructure) — Cutover Rehearsal:** Rehearsal has slipped twice in three weeks due to vendor staffing shortages, now just 4 days before the Nov 7 cutover with no buffer. *Needs:* Leadership visibility on vendor staffing risk ahead of cutover.
-- **HND-311 (Acme Cloud Infrastructure) — Security Review:** Vendor has not responded to two outreach attempts; due date has passed with no internal escalation in place. *Needs:* Leadership to direct escalation to vendor management, as this is currently unowned.
+All at-risk/blocked tickets are covered by the patterns above — no additional items to flag.
