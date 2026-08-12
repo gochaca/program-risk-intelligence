@@ -47,18 +47,32 @@ Transition: "Now I'd like to show you, in real time, how the model uses facts to
 
 Switch to browser, show the real Jira tickets `CRH-4`, `CRH-5`, and `CRH-9` with the posted AI comments.
 
-"Three tickets, three different teams, none of them mention each other. `CRH-9`'s vendor has gone silent for two weeks. `CRH-5` — Legal's own ticket — is actually *done*, just stuck waiting on a VP's sign-off, and she's traveling until Monday, after the due date. `CRH-4` is blocked because Legal hasn't delivered CCPA copy, flagged urgent, but nobody's actually chasing it. Read individually, three separate blocked tickets. 
+"Three tickets, three different teams, none of them mention each other. `CRH-9`'s vendor has gone silent for two weeks. `CRH-5` — Legal's own ticket — is actually *done*, just stuck waiting on a VP's sign-off, and she's traveling until Monday, after the due date. `CRH-4` is blocked because Legal hasn't delivered CCPA copy, flagged urgent, but nobody's actually chasing it. Read individually, three separate blocked tickets. Read together —"
 
-## python3 detect_patterns.py
+"I'm now running my pattern-detection script live, against this week's real classified data." Show terminal, run:
+```bash
+cd ~/Projects/program-risk-intelligence/01-program-risk-intelligence
+python3 -c "
+import json
+from detect_patterns import detect_patterns
+d = json.load(open('data/live_classified_updates.json'))
+updates = [{k: v for k, v in u.items() if k != 'raw_reply'} for u in d['updates']]
+patterns = detect_patterns(updates)
+for p in patterns:
+    print(f\"[{p['pattern_type']}] {', '.join(p['tickets_involved'])}\")
+    print(p['description'])
+    print('Why it matters:', p['why_it_matters'])
+    print()
+"
+```
 
-I am now running my python script to detect the patterns from the previous classify script. This will show the cross-source pattern finding (from the exec report or re-run `detect_patterns.py` live) "— they're all the same failure: work is stalled on an approval or a response, and nobody owns pushing it forward. That's the whole idea: read every update together, not one at a time."
+Point out the `systemic_theme` finding on `CRH-9, CRH-5, CRH-4` as it prints.
+
+"— they're all the same failure: work is stalled on an approval or a response, and nobody owns pushing it forward. That's the whole idea: read every update together, not one at a time."
 
 ## 4. Two-altitude reporting (30 sec)
 
 **Tools:** Browser (the two-altitude comparison graphic) — or Terminal + text editor if you'd rather run `generate_report.py` live and show the two output files directly.
-
-cd ~/Projects/program-risk-intelligence/01-program-risk-intelligence
-python3 detect_patterns.py
 
 Open the two-altitude comparison graphic, or run `python3 generate_report.py` live and show both output files.
 
