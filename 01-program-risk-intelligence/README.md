@@ -40,9 +40,9 @@ Signal Types
 
 | State | Meaning |
 |---|---|
-:green_circle:| **On Track** | No credible threat to the due date. Any risk mentioned is proactively managed. No escalation required |
-:yellow_circle:| **At Risk** | One or more signals below are present and could threaten the due date without intervention, but the work-stream is still moving. | 
-:red_circle:| **Blocked** | Progress has stopped — waiting on a person, team, vendor, or decision outside the reporting team's control, with no forward movement possible until it's resolved. |
+|:green_circle:| **On Track** | No credible threat to the due date. Any risk mentioned is proactively managed. No escalation required |
+|:yellow_circle:| **At Risk** | One or more signals below are present and could threaten the due date without intervention, but the work-stream is still moving. | 
+|:red_circle:| **Blocked** | Progress has stopped — waiting on a person, team, vendor, or decision outside the reporting team's control, with no forward movement possible until it's resolved. |
 
 ### Signal types (the "why")
 
@@ -53,11 +53,11 @@ These are the patterns that, in my experience, precede a missed date or an escal
 3. **Competing Objectives** — An urgent, unplanned item (an emergency, an executive ask, a production incident) has superseded the reported work, pulling people or priority away from it.
 4. **Unowned Escalation** — A real risk has been raised (sometimes even self-rated High) but no leader or decision-maker has picked it up or moved on it — the risk is named but nobody owns unblocking it.
 
-A single update can carry more than one signal. Self-reported risk is kept as an input feature, not the answer — the model is expected to sometimes *disagree* with it (e.g., a team rates itself "Medium" the same week its due date is tomorrow and it's still blocked on another team).
+A single update can carry more than one signal. Self-reported risk is kept as an input feature but is not the final answer. The model is expected to sometimes *disagree* with it (e.g., a team rates itself "Medium" the same week its due date is tomorrow and it's still blocked by another team).
 
 ## Design principle: cross-source over single-source
 
-Because the real risk is often only visible across updates, the mock dataset (below) is deliberately built with **connected threads** — the same vendor named as a blocker by two different teams, the same due-date chain spanning four tickets, the same team hit by two unrelated emergencies in one week — so that later milestones (cross-source pattern detection) have real signal to find, not just isolated rows.
+Because the real risk is often only visible across updates, the mock dataset (below) is deliberately built with **connected threads**. The same vendor named as a blocker by two  teams, the same due-date chain spanning four tickets, the same team hit by two unrelated emergencies in one week. This provides that later milestones (cross-source pattern detection) have real signal to detect and report. 
 
 ## Mock dataset
 
@@ -106,14 +106,14 @@ python3 classify.py
 
 ## Cross-source pattern detection
 
-A single update can only tell you about itself. [`detect_patterns.py`](./detect_patterns.py) takes the *whole batch* of classified updates in one call and looks for things that are only visible across multiple updates:
+A single update can only tell you about itself. [`detect_patterns.py`](./detect_patterns.py) takes the *whole batch* of classified updates in one call and looks for things that are visible across multiple updates:
 
-- **shared_dependency** — two+ updates from different teams point at the same root cause (same vendor, same upstream team), even without referencing each other's ticket numbers.
-- **team_overload** — one team has multiple issues this week where the *combination* signals real strain (e.g. an incident pulling engineers off an otherwise on-track item for the same team).
-- **dependency_chain** — one team's update explains why another team is stuck (the blocker named in ticket A is literally the subject of ticket B).
-- **systemic_theme** — the same signal type shows up across enough unrelated teams to indicate a program-level problem, not a one-off (e.g. several teams independently hit by emergencies the same week).
+- **shared_dependency**: Two updates from different teams point at the same root cause (same vendor, same upstream team), even without referencing each other's ticket numbers.
+- **team_overload**: One team has multiple issues this week where the *combination* signals real strain (e.g. an incident pulling engineers off an otherwise on-track item for the same team).
+- **dependency_chain**: One team's update explains why another team is stuck (the blocker named in ticket A is literally the subject of ticket B).
+- **systemic_theme**: The same signal type shows up across enough unrelated teams to indicate a program-level problem, not a one-off (e.g. several teams independently hit by emergencies the same week).
 
-Design decisions, consistent with the classification step: the patterns are also enum-constrained and forced via `tool_choice` (a `report_cross_source_patterns` tool), `ground_truth_*` fields are stripped from the batch before it's sent, and a pattern is only reported if it involves 2+ distinct tickets and would actually change what a program lead does that week — restating a single ticket's own already-known risk doesn't count.
+Design decisions, consistent with the classification step: the patterns are also enum-constrained and forced via `tool_choice` (a `report_cross_source_patterns` tool), `ground_truth_*` fields are stripped from the batch before it's sent, and a pattern is only reported if it involves 2+ distinct tickets and would actually change what a program lead does that week, restating a single ticket's own already known risk doesn't count.
 
 Running `python3 detect_patterns.py` (auto-runs `classify.py` first if `classified_updates.json` doesn't exist yet) found **6 patterns** in the first run against the mock data, including two the dataset was deliberately built to contain:
 - `HND-146c` + `HND-520` — the "unresponsive vendor" and the vendor's own "paused everything for an emergency" update are the same root cause, just visible from two different sides.
@@ -153,7 +153,7 @@ python3 generate_report.py
 
 [`evaluate.py`](./evaluate.py) runs two separate test sets and scores each with the same metric: classification accuracy, signal-type accuracy, and an explicit false positive / false negative breakdown (severity ordered `on_track < at_risk < blocked`; a false positive predicts *more* severe than truth, a false negative predicts *less* severe — the more dangerous direction, since missing a real risk is the whole failure mode this tool exists to prevent).
 
-- **Regression set** — the original 17 mock updates. Useful as a sanity check, but a high score here mostly proves the rubric is internally consistent with itself, since the dataset and the rubric were built together.
+- **Regression set**: The original 17 mock updates. Useful as a sanity check, but a high score here mostly proves the rubric is internally consistent with itself, since the dataset and the rubric were built together.
 - **Adversarial set** ([`data/eval_scenarios.json`](./data/eval_scenarios.json), 8 items) — built specifically for this milestone, and specifically *not* to be realistic "typical" updates. Each one baits a distinct failure mode: an anxious-sounding update describing a fully successful rollout (false-positive bait), three weeks of content-free "all good" boilerplate on a due-tomorrow item (false-negative bait), a team's own High self-report on an item that's actually fully signed off (does the tool blindly trust an inflated self-report?), dramatic incident language about something already resolved in the past, a quietly-worded deprioritization with no "emergency" framing, an escalation raised through a slow channel (email) rather than dramatically, a genuinely ambiguous blocked-vs-at_risk case, and a missing/null update on an already-overdue ticket (a data-handling edge case, not just a judgment one).
 
 ### Results (first run)
@@ -193,7 +193,7 @@ Milestones 1-5 run entirely on a static mock dataset. This milestone closes the 
 
 ### Draft-only, on purpose
 
-The Gmail client only ever calls `users().drafts().create()`. There is no code path to `users().messages().send()` anywhere in this codebase. Every email this tool produces — first request or follow-up — sits in the account's Drafts folder until a human reads it and clicks send. This was a deliberate choice, not a technical limitation: a tool that emails real colleagues on a schedule with zero human review is a much bigger blast radius than one that drafts and waits.
+The Gmail client only ever calls `users().drafts().create()`. There is no code path to `users().messages().send()` anywhere in this codebase. Every email this tool produces, first request or follow-up, sits in the account's Drafts folder until a human reads it and clicks send. This was a deliberate choice, not a technical limitation: a tool that emails real colleagues on a schedule with zero human review is a much bigger blast radius than one that drafts and waits.
 
 ### Real people don't fill in templates
 
@@ -249,17 +249,17 @@ One real bug turned up in this run: `collect_responses()` didn't apply the same 
 
 ### Two real incidents today, and the fixes
 
-**Incident 1 — `simulate` touched a real account.** While testing the real Jira connection, `python3 weekly_cycle.py simulate` was run to regenerate the mock demo artifacts — but at the time, `simulate` used `get_jira_client()`, which auto-selects Real vs. Mock based on whatever's configured in the environment. Since real Jira credentials were now set, `simulate` silently ran against the **real** `CRH` project instead of the mock fixtures, and posted 11 nonsense "no response" comments (built from the old 2025 mock inbox, which has nothing matching real `CRH-xxx` keys) onto real tickets.
+**Incident 1: `simulate` touched a real account.** While testing the real Jira connection, `python3 weekly_cycle.py simulate` was run to regenerate the mock demo artifacts — but at the time, `simulate` used `get_jira_client()`, which auto-selects Real vs. Mock based on whatever's configured in the environment. Since real Jira credentials were now set, `simulate` silently ran against the **real** `CRH` project instead of the mock fixtures, and posted 11 nonsense "no response" comments (built from the old 2025 mock inbox, which has nothing matching real `CRH-xxx` keys) onto real tickets.
 
 Caught by inspecting the actual comments before assuming success, and fixed properly rather than papered over: `simulate` now always instantiates `MockJiraClient()`/`MockGmailClient()` directly, regardless of what's configured — a mode whose entire purpose is a safe local test must not be able to touch a real account just because credentials happen to be present. The 11 bad comments were deleted via the API afterward.
 
-**Incident 2 — a real `credentials.json` got committed to the repo root.** Found via GitHub's own secret-scanning warning. The file wasn't added through any local git operation on this project — the path (`credentials.json` at the repo root, not `01-program-risk-intelligence/credentials.json`) and the commit pattern (`Create`, then two `Update`s) point to it being added directly through GitHub's website. That matters because **`.gitignore` has zero effect on files created that way** — it only stops local git tooling from picking up new files, and it stops protecting a file entirely once that file is ever tracked. The exposed OAuth client was revoked and replaced immediately; the file was removed from the current tree (`git rm`) once the rotation was confirmed. The dead credential still exists in the old commit history — harmless now that it's revoked, but history hasn't been rewritten to remove it, since that needs a force-push and wasn't asked for.
+**Incident 2: a real `credentials.json` got committed to the repo root.** Found via GitHub's own secret-scanning warning. The file wasn't added through any local git operation on this project — the path (`credentials.json` at the repo root, not `01-program-risk-intelligence/credentials.json`) and the commit pattern (`Create`, then two `Update`s) point to it being added directly through GitHub's website. That matters because **`.gitignore` has zero effect on files created that way** — it only stops local git tooling from picking up new files, and it stops protecting a file entirely once that file is ever tracked. The exposed OAuth client was revoked and replaced immediately; the file was removed from the current tree (`git rm`) once the rotation was confirmed. The dead credential still exists in the old commit history — harmless now that it's revoked, but history hasn't been rewritten to remove it, since that needs a force-push and wasn't asked for.
 
 Documenting both here rather than quietly fixing them, since "here's what broke and how it got caught and fixed" is exactly the kind of thing worth being honest about in a project whose whole pitch is catching risk before it becomes a blocker.
 
 ### The first real unattended run
 
-The Friday 3pm `report` job fired on its own for the first time on 2026-08-07 — the very first scheduled occurrence after activation — with no one watching. `logs/report.log` shows it ran cleanly: collected updates, classified, posted comments to real Jira tickets. That run happened to land *before* the `CRH-2` test reply was sent that same day, so it correctly saw zero replies at that moment — not a bug, just real-time state at whatever instant a scheduled job fires.
+The Friday 3pm `report` job fired on its own for the first time on 2026-08-07, the very first scheduled occurrence after activation, with no one watching. `logs/report.log` shows it ran cleanly: collected updates, classified, posted comments to real Jira tickets. That run happened to land *before* the `CRH-2` test reply was sent that same day, so it correctly saw zero replies at that moment — not a bug, just real-time state at whatever instant a scheduled job fires.
 
 Investigating that, though, turned up a real bug: `collect_responses()`'s non-response count was based on `self_reported_risk is None`, but a genuine reply that just doesn't state an explicit risk level (e.g. "copy's done, no blockers" with no Low/Medium/High) *also* has `self_reported_risk: None` — so a real reply and a genuine silence were indistinguishable in that count, even though the classification itself was always correct. Fixed by tracking whether a reply was actually found, explicitly, rather than inferring it after the fact from an unrelated field.
 
