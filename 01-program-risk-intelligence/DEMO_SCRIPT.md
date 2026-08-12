@@ -38,9 +38,9 @@ print('AI SAID:', result['classification'], '-', result['reason'])
 
 "This next one isn't test data — it's from a real Jira Cloud project I connected this tool to."
 
-Switch to browser, show the real Jira tickets `CRH-4` and `CRH-5` with the posted AI comments.
+Switch to browser, show the real Jira tickets `CRH-4`, `CRH-5`, and `CRH-9` with the posted AI comments.
 
-"Two tickets, two different queues, neither one mentions the other. `CRH-4` is blocked because Legal hasn't sent over CCPA copy. `CRH-5` — Legal's *own* ticket — is blocked because Legal's gone silent on two requests. Read individually, two blocked tickets. Read together —" show the cross-source pattern finding (from the exec report or re-run `detect_patterns.py` live) "— it's the same team, underwater, quietly stalling everything downstream of it. That's the whole pitch: read every update together, not one at a time."
+"Three tickets, three different teams, none of them mention each other. `CRH-9`'s vendor has gone silent on two requests. `CRH-5` — Legal's own ticket — is actually *done*, just stuck waiting on a VP's sign-off, and she's traveling until Monday, after the due date. `CRH-4` is blocked because Legal hasn't delivered CCPA copy, flagged urgent, but nobody's actually chasing it. Read individually, three separate blocked tickets. Read together —" show the cross-source pattern finding (from the exec report or re-run `detect_patterns.py` live) "— they're all the same failure: work is stalled on an approval or a response, and nobody owns pushing it forward. That's the whole pitch: read every update together, not one at a time."
 
 ## 4. Two-altitude reporting (30 sec)
 
