@@ -19,7 +19,7 @@ Every week, I would collect status updates for 10-15 teams, internal and externa
 | Self-reported risk | Medium |
 | Rationale | Need to keep track of each site and validate the language has been implemented as required. |
 
-Two things make this hard to do well by hand, every week, at scale:
+Three things make this hard to do well by hand, every week, at scale:
 
 1. **Self-reported risk is unreliable in isolation.** A team can rate its own risk "Low" while quietly blocking someone else's "High." A due date of "tomorrow" with an unresolved dependency reads very differently than another teams with three weeks of runway. "Low" fails to capture this. 
 2. **The real risk often lives *between* updates, not inside one.** Two teams independently naming the same vendor as a blocker, or three separate emergencies all landing on the same team in the same week.  They are invisible if you read updates one at a time.
