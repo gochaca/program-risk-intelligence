@@ -2,7 +2,9 @@
 
 **Status:** Milestone 6: Complete: Live vendor coordination (full loop validated end-to-end against real Jira + Gmail)
 
-My custom designed and built tool that sends update requests and ingests updates from multiple teams (internal and external), classifies risk with a stated reason, flags patterns across teams, and auto-drafts an analysis in a weekly status report and executive summary [Program Risk and Vendor Coordination Intelligence Weekly Status](https://claude.ai/code/artifact/4ce4c387-19b0-4474-aa89-f1066131bba4)
+My custom designed and built tool that sends update requests and ingests updates from multiple teams (internal and external), classifies risk with a stated reason, flags patterns across teams, and auto-drafts an analysis in a weekly status report and executive summary 
+
+** [Live Demo](https://www.youtube.com/watch?v=80fFhQc-Mzo&t=62s) **
 
 ## The problem
 Every week, I would collect status updates for 10-15 teams, internal and external each with multiple competing projects. I would use this to create reports for leadership. I had three weekly challenges to overcome. 
