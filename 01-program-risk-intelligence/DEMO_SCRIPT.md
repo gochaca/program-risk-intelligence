@@ -17,7 +17,7 @@ Show: `01-program-risk-intelligence/README.md` on GitHub, "The problem" section.
 
 ## 2. Demonstration 1 — the model overrides a self-reported "Low" (40 sec)
 
-**Tools:** Terminal — Python (`classify.py`, run live via inline `python3 -c`).
+**Tools:** Terminal — paste and run the single `python3 -c "..."` command below (it calls `classify_update` from `classify.py`).
 
 "Here's a real case, pulled straight from this week's actual Jira project and the real reply that came in for it. A team said their integration was 'Low' risk — work's proceeding smoothly, and the downstream team even agreed to push the deadline out. Nobody mentioned that the original due date had already come and gone."
 
@@ -41,7 +41,7 @@ Transition: "Now I'd like to show you, in real time, how the model uses facts to
 
 ## 3. Demonstration 2 — cross-dependency detection, on a real Jira project (45 sec)
 
-**Tools:** Browser — Jira Cloud (real tickets `CRH-4`, `CRH-5`, `CRH-9`, with the posted AI comments).
+**Tools:** Browser first (Jira Cloud, real tickets `CRH-4`, `CRH-5`, `CRH-9` with the posted AI comments), then switch to Terminal and paste/run the `python3 -c "..."` command below.
 
 "This next one isn't test data — it's from a real Jira Cloud project I connected this tool to."
 
